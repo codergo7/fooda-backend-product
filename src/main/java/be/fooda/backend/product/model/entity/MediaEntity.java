@@ -24,7 +24,7 @@ public class MediaEntity {
 
     @Id
     @Column(nullable = false, unique = true)
-    UUID mediaId;
+    UUID id;
 
     @FullTextField
     @URL
@@ -33,7 +33,7 @@ public class MediaEntity {
 
     Boolean isDefault = Boolean.FALSE;
 
-    @JoinColumn(name = "productId")
+    @JoinColumn(name = "product_id")
     @OneToOne
     ProductEntity product;
 
@@ -46,21 +46,21 @@ public class MediaEntity {
             return false;
         }
         MediaEntity that = (MediaEntity) o;
-        return Objects.equals(getMediaId(), that.getMediaId());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getMediaId());
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
         return "{\"MediaEntity\":{"
-                + "                        \"mediaId\":" + mediaId
+                + "                        \"id\":" + getId()
                 + ",                         \"url\":\"" + url + "\""
                 + ",                         \"isDefault\":\"" + isDefault + "\""
-                + ",                         \"product\":" + product.getProductId()
+                + ",                         \"productId\":" + product.getId()
                 + "}}";
     }
 }

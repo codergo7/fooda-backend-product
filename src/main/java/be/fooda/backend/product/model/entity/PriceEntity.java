@@ -27,7 +27,7 @@ public class PriceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID priceId;
+    UUID id;
 
     @FullTextField
     String title;
@@ -45,7 +45,8 @@ public class PriceEntity {
     @FullTextField
     String currency = "EUR"; // EURO, €, EUR -> EUR
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
 
     @Override
@@ -57,24 +58,24 @@ public class PriceEntity {
             return false;
         }
         PriceEntity that = (PriceEntity) o;
-        return Objects.equals(getPriceId(), that.getPriceId());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPriceId());
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
         return "{\"PriceEntity\":{"
-                + "                        \"priceId\":" + priceId
+                + "                        \"id\":" + getId()
                 + ",                         \"title\":\"" + title + "\""
                 + ",                         \"amount\":\"" + amount + "\""
                 + ",                         \"expiresAt\":" + expiresAt
                 + ",                         \"isDefault\":\"" + isDefault + "\""
                 + ",                         \"currency\":\"" + currency + "\""
-                + ",                         \"product\":" + product.getProductId()
+                + ",                         \"productId\":" + product.getId()
                 + "}}";
     }
 }

@@ -22,7 +22,7 @@ public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID categoryId;
+    UUID id;
 
     @FullTextField
     @Column(nullable = false, unique = false)
@@ -31,7 +31,8 @@ public class CategoryEntity {
     @Lob
     Byte[] icon;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
 
     @Override
@@ -43,20 +44,20 @@ public class CategoryEntity {
             return false;
         }
         CategoryEntity that = (CategoryEntity) o;
-        return Objects.equals(getCategoryId(), that.getCategoryId());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCategoryId());
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
         return "{\"CategoryEntity\":{"
-                + "                        \"categoryId\":" + categoryId
+                + "                        \"categoryId\":" + getId()
                 + ",                         \"title\":\"" + title + "\""
-                + ",                         \"product\":" + product.getProductId()
+                + ",                         \"productId\":" + product.getId()
                 + "}}";
     }
 }

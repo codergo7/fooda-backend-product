@@ -24,7 +24,7 @@ public class IngredientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID ingredientId;
+    UUID id;
 
     @FullTextField
     String title;
@@ -32,7 +32,8 @@ public class IngredientEntity {
     @GenericField
     BigDecimal price = BigDecimal.valueOf(0.0);
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
 
     @Override
@@ -44,21 +45,21 @@ public class IngredientEntity {
             return false;
         }
         IngredientEntity that = (IngredientEntity) o;
-        return Objects.equals(getIngredientId(), that.getIngredientId());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIngredientId());
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
         return "{\"IngredientEntity\":{"
-                + "                        \"ingredientId\":" + ingredientId
+                + "                        \"ingredientId\":" + getId()
                 + ",                         \"title\":\"" + title + "\""
                 + ",                         \"price\":\"" + price + "\""
-                + ",                         \"product\":" + product.getProductId()
+                + ",                         \"productId\":" + product.getId()
                 + "}}";
     }
 }

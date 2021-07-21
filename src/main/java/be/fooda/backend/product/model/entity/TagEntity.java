@@ -24,13 +24,14 @@ public class TagEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @KeywordField
-    UUID tagId;
+    UUID id;
 
     @FullTextField
     @Column(nullable = false, unique = false)
     String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
 
     @Override
@@ -42,20 +43,20 @@ public class TagEntity {
             return false;
         }
         final var tagEntity = (TagEntity) o;
-        return Objects.equals(getTagId(), tagEntity.getTagId());
+        return Objects.equals(getId(), tagEntity.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTagId());
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
         return "{\"TagEntity\":{"
-                + "                        \"tagId\":" + tagId
+                + "                        \"id\":" + getId()
                 + ",                         \"value\":\"" + value + "\""
-                + ",                         \"product\":" + product.getProductId()
+                + ",                         \"product\":" + product.getId()
                 + "}}";
     }
 }

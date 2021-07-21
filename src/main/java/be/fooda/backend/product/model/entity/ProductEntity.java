@@ -26,7 +26,7 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @KeywordField
-    UUID productId;
+    UUID id;
 
     Boolean isActive = Boolean.TRUE;
 
@@ -34,6 +34,7 @@ public class ProductEntity {
     String title;
 
     @KeywordField
+    @Column(unique = true)
     String eTrackingId;
 
     @Lob
@@ -45,14 +46,7 @@ public class ProductEntity {
 
     Boolean isFeatured = Boolean.FALSE;
 
-    @IndexedEmbedded
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    StoreEntity store;
-
-    public void setStore(StoreEntity store) {
-        store.setProduct(this);
-        this.store = store;
-    }
+    String storeId;
 
     @FullTextField
     @Enumerated(EnumType.STRING)
@@ -192,23 +186,23 @@ public class ProductEntity {
             return false;
         }
         ProductEntity that = (ProductEntity) o;
-        return Objects.equals(getProductId(), that.getProductId());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getProductId());
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
-        return "{\"ProductEntity\":{" + "                        \"productId\":" + productId
+        return "{\"ProductEntity\":{" + "                        \"id\":" + getId()
                 + ",                         \"isActive\":\"" + isActive + "\""
                 + ",                         \"title\":\"" + getTitle() + "\"" + ",                         \"eTrackingId\":\""
                 + eTrackingId + "\"" + ",                         \"description\":\"" + description + "\""
                 + ",                         \"limitPerOrder\":\"" + limitPerOrder + "\""
                 + ",                         \"isFeatured\":\"" + isFeatured + "\""
-                + ",                         \"store\":" + store + ",                         \"type\":\"" + type + "\""
+                + ",                         \"storeId\":" + getStoreId() + ",                         \"type\":\"" + type + "\""
                 + ",                         \"prices\":" + prices + ",                         \"taxes\":" + taxes
                 + ",                         \"defaultImage\":" + defaultImage
                 + ",                         \"categories\":" + categories + ",                         \"tags\":"

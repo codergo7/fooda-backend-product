@@ -21,7 +21,7 @@ public class SearchProductRequest {
     String description;
     Integer limitPerOrder;
     Boolean isFeatured;
-    SearchStoreRequest store;
+    UUID storeId;
     SearchTypeRequest type;
 
     Collection<SearchPriceRequest> prices;

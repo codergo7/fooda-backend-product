@@ -21,7 +21,7 @@ public class ProductResponse {
     String description;
     Integer limitPerOrder;
     Boolean isFeatured;
-    StoreResponse store;
+    String storeId;
     TypeResponse type;
 
     Collection<PriceResponse> prices = new ArrayList<>();

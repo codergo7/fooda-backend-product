@@ -43,8 +43,8 @@ public class ProductFlow {
         }
 
         // IF(PRODUCT_EXISTS)
-        boolean exists = productRepository.existsByTitleAndStore_StoreId(request.getTitle(),
-                request.getStore().getStoreId());
+        boolean exists = productRepository.existsByTitleAndStoreId(request.getTitle(),
+                request.getStoreId());
 
         if (exists) {
             // THROW_EXCEPTION
@@ -137,6 +137,30 @@ public class ProductFlow {
 
         // MAP & RETURN
         return productMapper.toResponses(pages.toList());
+    }
+
+    // EXISTS_BY_ID
+    public Boolean existsById(UUID id) throws NullPointerException, ResourceNotFoundException {
+        
+        if (Objects.isNull(id)) {
+            throw new NullPointerException(HttpFailureMassages.PRODUCT_ID_IS_REQUIRED.getDescription());
+        }
+
+        return productRepository.existsById(id);
+    }
+
+     // EXISTS_BY_ID
+     public Boolean existsByUniqueFields(String title, String storeId) throws NullPointerException, ResourceNotFoundException {
+        
+        if (Objects.isNull(title)) {
+            throw new NullPointerException(HttpFailureMassages.PRODUCT_TITLE_IS_REQUIRED.getDescription());
+        }
+
+        if (Objects.isNull(storeId)) {
+            throw new NullPointerException(HttpFailureMassages.STORE_ID_IS_REQUIRED.getDescription());
+        }
+
+        return productRepository.existsByTitleAndStoreId(title, storeId);
     }
 
 }

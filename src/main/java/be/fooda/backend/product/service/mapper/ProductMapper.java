@@ -33,10 +33,13 @@ public interface ProductMapper {
 
     UpdateProductRequest toRequest(ProductEntity source, @MappingTarget UpdateProductRequest target);
 
+    @Mapping(source = "id", target = "productId")
     ProductResponse toResponse(ProductEntity source);
 
+    @Mapping(source = "id", target = "productId")
     Set<ProductResponse> toResponses(Set<ProductEntity> sourceSet);
 
+    @Mapping(source = "id", target = "productId")
     List<ProductResponse> toResponses(List<ProductEntity> sourceList);
 
 }

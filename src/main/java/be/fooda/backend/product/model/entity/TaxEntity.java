@@ -24,7 +24,7 @@ public class TaxEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID taxId;
+    UUID id;
 
     @Column(nullable = false, unique = false)
     @FullTextField
@@ -36,7 +36,8 @@ public class TaxEntity {
 
     Boolean isDefault = Boolean.FALSE;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
 
     @Override
@@ -48,22 +49,22 @@ public class TaxEntity {
             return false;
         }
         final var taxEntity = (TaxEntity) o;
-        return Objects.equals(getTaxId(), taxEntity.getTaxId());
+        return Objects.equals(getId(), taxEntity.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTaxId());
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
         return "{\"TaxEntity\":{"
-                + "                        \"taxId\":" + taxId
+                + "                        \"id\":" + getId()
                 + ",                         \"title\":\"" + title + "\""
                 + ",                         \"percentage\":\"" + percentage + "\""
                 + ",                         \"isDefault\":\"" + isDefault + "\""
-                + ",                         \"product\":" + product.getProductId()
+                + ",                         \"product\":" + product.getId()
                 + "}}";
     }
 }

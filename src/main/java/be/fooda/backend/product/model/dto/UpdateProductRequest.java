@@ -19,7 +19,7 @@ public class UpdateProductRequest {
     String description;
     Integer limitPerOrder;
     Boolean isFeatured;
-    UpdateStoreRequest store;
+    String storeId;
     UpdateTypeRequest type;
     
     Collection<UpdatePriceRequest> prices = new ArrayList<>();
