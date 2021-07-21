@@ -98,14 +98,7 @@ public class ProductEntity {
         return tax;
     }
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    @IndexedEmbedded
-    MediaEntity defaultImage;
-
-    public void setDefaultImage(MediaEntity defaultImage) {
-        defaultImage.setProduct(this);
-        this.defaultImage = defaultImage;
-    }
+    String defaultImageId;
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -204,7 +197,7 @@ public class ProductEntity {
                 + ",                         \"isFeatured\":\"" + isFeatured + "\""
                 + ",                         \"storeId\":" + getStoreId() + ",                         \"type\":\"" + type + "\""
                 + ",                         \"prices\":" + prices + ",                         \"taxes\":" + taxes
-                + ",                         \"defaultImage\":" + defaultImage
+                + ",                         \"defaultImageId\":" + getDefaultImageId()
                 + ",                         \"categories\":" + categories + ",                         \"tags\":"
                 + tags + ",                         \"ingredients\":" + ingredients + "}}";
     }

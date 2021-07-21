@@ -44,11 +44,7 @@ public class CreateProductRequest {
         this.taxes.remove(tax);
     }
 
-    CreateMediaRequest defaultImage;
-
-    public void setDefaultImage(CreateMediaRequest defaultImage) {
-        this.defaultImage = defaultImage;
-    }
+    String defaultImageId;
 
     Collection<CreateCategoryRequest> categories = new ArrayList<>();
 

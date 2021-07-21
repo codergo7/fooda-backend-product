@@ -44,11 +44,7 @@ public class SearchProductRequest {
         this.taxes.remove(tax);
     }
 
-    SearchMediaRequest defaultImage;
-
-    public void setDefaultImage(SearchMediaRequest defaultImage) {
-        this.defaultImage = defaultImage;
-    }
+    String defaultImageId;
 
     Collection<SearchCategoryRequest> categories;
 

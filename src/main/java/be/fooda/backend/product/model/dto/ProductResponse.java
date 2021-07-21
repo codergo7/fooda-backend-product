@@ -44,7 +44,7 @@ public class ProductResponse {
         this.taxes.remove(tax);
     }
 
-    MediaResponse defaultImage;
+    String defaultImageId;
 
     Collection<CategoryResponse> categories = new ArrayList<>();
 

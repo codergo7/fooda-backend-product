@@ -42,11 +42,7 @@ public class UpdateProductRequest {
         this.taxes.remove(tax);
     }
 
-    UpdateMediaRequest defaultImage;
-
-    public void setDefaultImage(UpdateMediaRequest defaultImage) {
-        this.defaultImage = defaultImage;
-    }
+    String defaultImageId;
 
     Collection<UpdateCategoryRequest> categories = new ArrayList<>();
 
