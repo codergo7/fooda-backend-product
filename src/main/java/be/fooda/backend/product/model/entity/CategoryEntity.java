@@ -2,6 +2,7 @@ package be.fooda.backend.product.model.entity;
 
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,8 +45,7 @@ public class CategoryEntity {
     Byte[] icon;
 
     @ToString.Exclude
-    @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     ProductEntity product;
 
 }

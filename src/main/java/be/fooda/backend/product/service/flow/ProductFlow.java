@@ -1,5 +1,6 @@
 package be.fooda.backend.product.service.flow;
 
+import be.fooda.backend.product.dao.ProductIndexer;
 import be.fooda.backend.product.dao.ProductRepository;
 import be.fooda.backend.product.model.dto.CreateProductRequest;
 import be.fooda.backend.product.model.dto.ProductResponse;
@@ -8,23 +9,38 @@ import be.fooda.backend.product.model.entity.ProductEntity;
 import be.fooda.backend.product.model.http.HttpFailureMassages;
 import be.fooda.backend.product.service.exception.ResourceNotFoundException;
 import be.fooda.backend.product.service.mapper.ProductMapper;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ProductFlow {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final ProductIndexer productIndexer;
+    private final ObjectMapper jsonMapper;
 
     /*
      * Responsibilities of this class: 1- All scenarios (requirements) will be
@@ -34,7 +50,8 @@ public class ProductFlow {
      */
 
     // CREATE_PRODUCT(REQUEST)
-    public void createProduct(CreateProductRequest request) throws NullPointerException, ResourceNotFoundException {
+    public void createProduct(CreateProductRequest request)
+            throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // IF(NULL)
         if (Objects.isNull(request)) {
@@ -43,8 +60,7 @@ public class ProductFlow {
         }
 
         // IF(PRODUCT_EXISTS)
-        boolean exists = productRepository.existsByTitleAndStoreId(request.getTitle(),
-                request.getStoreId());
+        boolean exists = productRepository.existsByTitleAndStoreId(request.getTitle(), request.getStoreId());
 
         if (exists) {
             // THROW_EXCEPTION
@@ -57,11 +73,14 @@ public class ProductFlow {
         // SAVE_TO_DB(ENTITY)
         productRepository.save(entity);
 
+        // LOG
+        log.info("CREATE A SINGLE PRODUCT: " + "\n\n" + jsonMapper.writeValueAsString(entity) + "\n\n");
+
     }
 
     // UPDATE_PRODUCT(UNIQUE_IDENTIFIER, REQUEST)
     public void updateProduct(UUID id, UpdateProductRequest request)
-            throws NullPointerException, ResourceNotFoundException {
+            throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // IF(NULL)
         if (Objects.isNull(request)) {
@@ -84,22 +103,31 @@ public class ProductFlow {
         // UPDATE_FROM_DB
         productRepository.save(entityToUpdate);
 
+        // LOG
+        log.info("UPDATE A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(entity) + "\n\n");
+
     }
 
     // FIND_ALL(PAGE_NO, PAGE_SIZE)
     public List<ProductResponse> findAll(int pageNo, int pageSize)
-            throws NullPointerException, ResourceNotFoundException {
+            throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // READ_FROM_DB(PAGE_NO, PAGE_SIZE)
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         Page<ProductEntity> pages = productRepository.findAll(pageable);
 
+        final var responses = productMapper.toResponses(pages.toList());
+
+        // LOG
+        log.info("FIND ALL PRODUCTS: " + "\n\n" + jsonMapper.writeValueAsString(responses) + "\n\n");
+
         // MAP & RETURN
-        return productMapper.toResponses(pages.toList());
+        return responses;
     }
 
     // FIND_BY_ID
-    public ProductResponse findById(UUID id) throws NullPointerException, ResourceNotFoundException {
+    public ProductResponse findById(UUID id)
+            throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         if (Objects.isNull(id)) {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_ID_IS_REQUIRED.getDescription());
@@ -112,13 +140,18 @@ public class ProductFlow {
             throw new ResourceNotFoundException(HttpFailureMassages.PRODUCT_NOT_FOUND.getDescription());
         }
 
+        final var response = productMapper.toResponse(oEntity.get());
+
+        // LOG
+        log.info("FIND A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(response) + "\n\n");
+
         // MAP & RETURN
-        return productMapper.toResponse(oEntity.get());
+        return response;
     }
 
     // FIND_BY_TITLE
     public List<ProductResponse> findByTitle(String title, int pageNo, int pageSize)
-            throws NullPointerException, ResourceNotFoundException {
+            throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         if (Objects.isNull(title)) {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_TITLE_IS_REQUIRED.getDescription());
@@ -135,23 +168,35 @@ public class ProductFlow {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         Page<ProductEntity> pages = productRepository.findAll(pageable);
 
+        final var responses = productMapper.toResponses(pages.toList());
+
+        // LOG
+        log.info("FIND ALL PRODUCTS: " + "\n\n" + jsonMapper.writeValueAsString(responses) + "\n\n");
+
         // MAP & RETURN
-        return productMapper.toResponses(pages.toList());
+        return responses;
     }
 
     // EXISTS_BY_ID
-    public Boolean existsById(UUID id) throws NullPointerException, ResourceNotFoundException {
-        
+    public Boolean existsById(UUID id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+
         if (Objects.isNull(id)) {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_ID_IS_REQUIRED.getDescription());
         }
 
-        return productRepository.existsById(id);
+        final var response = productRepository.existsById(id);
+
+        // LOG
+        final var result = new Exists(Map.of("id", id), response);
+        log.info("PRODUCT EXISTS BY UNIQUE FIELDS: " + "\n\n" + jsonMapper.writeValueAsString(result) + "\n\n");
+
+        return response;
     }
 
-     // EXISTS_BY_ID
-     public Boolean existsByUniqueFields(String title, String storeId) throws NullPointerException, ResourceNotFoundException {
-        
+    // EXISTS_BY_ID
+    public Boolean existsByUniqueFields(String title, String storeId)
+            throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+
         if (Objects.isNull(title)) {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_TITLE_IS_REQUIRED.getDescription());
         }
@@ -160,7 +205,21 @@ public class ProductFlow {
             throw new NullPointerException(HttpFailureMassages.STORE_ID_IS_REQUIRED.getDescription());
         }
 
-        return productRepository.existsByTitleAndStoreId(title, storeId);
+        final var response = productRepository.existsByTitleAndStoreId(title, storeId);
+
+        // LOG
+        final var result = new Exists(Map.of("title", title, "storeId", storeId), response);
+        log.info("PRODUCT EXISTS BY UNIQUE FIELDS: " + "\n\n" + jsonMapper.writeValueAsString(result) + "\n\n");
+
+        return response;
+    }
+
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PUBLIC)
+    @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+    class Exists {
+        Map<String, Object> params;
+        boolean result;
     }
 
 }

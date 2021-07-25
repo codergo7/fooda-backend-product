@@ -1,5 +1,6 @@
 package be.fooda.backend.product.model.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,7 +72,7 @@ public class ProductEntity {
     
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<PriceEntity> prices;
+    List<PriceEntity> prices = new ArrayList<>();
 
     public void setPrices(List<PriceEntity> prices) {
         for (int index = 0; index < prices.size(); index++) {
@@ -92,7 +93,7 @@ public class ProductEntity {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<TaxEntity> taxes;
+    List<TaxEntity> taxes = new ArrayList<>();
 
     public void addTax(TaxEntity tax) {
         tax.setProduct(this);
@@ -116,7 +117,7 @@ public class ProductEntity {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<CategoryEntity> categories;
+    List<CategoryEntity> categories = new ArrayList<>();
 
     public void addCategory(CategoryEntity category) {
         category.setProduct(this);
@@ -137,7 +138,7 @@ public class ProductEntity {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<TagEntity> tags;
+    List<TagEntity> tags = new ArrayList<>();
 
     public void addTag(TagEntity tag) {
         tag.setProduct(this);
@@ -159,7 +160,7 @@ public class ProductEntity {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<IngredientEntity> ingredients;
+    List<IngredientEntity> ingredients = new ArrayList<>();
 
     public void addIngredient(IngredientEntity ingredient) {
         ingredient.setProduct(this);

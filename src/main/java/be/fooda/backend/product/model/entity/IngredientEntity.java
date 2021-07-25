@@ -3,6 +3,7 @@ package be.fooda.backend.product.model.entity;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -43,8 +44,7 @@ public class IngredientEntity {
     BigDecimal price = BigDecimal.valueOf(0.0);
 
     @ToString.Exclude
-    @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     ProductEntity product;
 
 }
