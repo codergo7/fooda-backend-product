@@ -2,6 +2,7 @@ package be.fooda.backend.product.model.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.Delegate;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.*;
@@ -22,56 +23,46 @@ public class UpdateProductRequest {
     String storeId;
     UpdateTypeRequest type;
     
-    Collection<UpdatePriceRequest> prices = new ArrayList<>();
+    @Delegate(types = PriceCollection.class)
+    final List<UpdatePriceRequest> prices = new ArrayList<>();
 
-    public void addPrice(UpdatePriceRequest price) {
-        this.prices.add(price);
-    }
-
-    public void removePrice(UpdatePriceRequest price) {
-        this.prices.remove(price);
-    }
-
-    Collection<UpdateTaxRequest> taxes = new ArrayList<>();
-
-    public void addTax(UpdateTaxRequest tax) {
-        this.taxes.add(tax);
-    }
-
-    public void removeTax(UpdateTaxRequest tax) {
-        this.taxes.remove(tax);
-    }
+    @Delegate(types = TaxCollection.class)
+    final List<UpdateTaxRequest> taxes = new ArrayList<>();
 
     String defaultImageId;
 
-    Collection<UpdateCategoryRequest> categories = new ArrayList<>();
+    @Delegate(types = CategoryCollection.class)
+    final List<UpdateCategoryRequest> categories = new ArrayList<>();
 
-    public void addCategory(UpdateCategoryRequest category) {
-        this.categories.add(category);
+    @Delegate(types = TagCollection.class)
+    final List<UpdateTagRequest> tags = new ArrayList<>();
+
+    @Delegate(types = IngredientCollection.class)
+    final List<UpdateIngredientRequest> ingredients = new ArrayList<>();
+
+    private interface IngredientCollection {
+        boolean add(UpdateIngredientRequest ingredient);
+        boolean remove(UpdateIngredientRequest ingredient);
     }
 
-    public void removeCategory(UpdateCategoryRequest category) {
-        this.categories.remove(category);
+    private interface TagCollection {
+        boolean add(UpdateTagRequest tag);
+        boolean remove(UpdateTagRequest tag);
+    }
+   
+    private interface TaxCollection {
+        boolean add(UpdateTaxRequest tax);
+        boolean remove(UpdateTaxRequest tax);
     }
 
-    Collection<UpdateTagRequest> tags = new ArrayList<>();
-
-    public void addTag(UpdateTagRequest tag) {
-        this.tags.add(tag);
+    private interface PriceCollection {
+        boolean add(UpdatePriceRequest price);
+        boolean remove(UpdatePriceRequest price);
     }
 
-    public void removeTag(UpdateTagRequest tag) {
-        this.tags.remove(tag);
-    }
-
-    Collection<UpdateIngredientRequest> ingredients = new ArrayList<>();
-
-    public void addIngredient(UpdateIngredientRequest ingredient) {
-        this.ingredients.add(ingredient);
-    }
-
-    public void removeIngredient(UpdateIngredientRequest ingredient) {
-        this.ingredients.add(ingredient);
+    private interface CategoryCollection {
+        boolean add(UpdateCategoryRequest category);
+        boolean remove(UpdateCategoryRequest category);
     }
 
 }

@@ -1,6 +1,7 @@
 package be.fooda.backend.product.model.dto;
 
 import lombok.*;
+import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.jackson.Jacksonized;
 
@@ -24,57 +25,51 @@ public class ProductResponse {
     String storeId;
     TypeResponse type;
 
-    Collection<PriceResponse> prices = new ArrayList<>();
-    
-    public void addPrice(PriceResponse price) {
-        this.prices.add(price);
-    }
+    @Delegate(types = PriceCollection.class)
+    final List<PriceResponse> prices = new ArrayList<>();
 
-    public void removePrice(PriceResponse price) {
-        this.prices.remove(price);
-    }
-
-    Collection<TaxResponse> taxes = new ArrayList<>();
-
-    public void addTax(TaxResponse tax) {
-        this.taxes.add(tax);
-    }
-
-    public void removeTax(TaxResponse tax) {
-        this.taxes.remove(tax);
-    }
+    @Delegate(types = TaxCollection.class)
+    final List<TaxResponse> taxes = new ArrayList<>();
 
     String defaultImageId;
 
-    Collection<CategoryResponse> categories = new ArrayList<>();
+    @Delegate(types = CategoryCollection.class)
+    final List<CategoryResponse> categories = new ArrayList<>();
 
-    public void addCategory(CategoryResponse category) {
-        this.categories.add(category);
+    @Delegate(types = TagCollection.class)
+    final List<TagResponse> tags = new ArrayList<>();
+
+    @Delegate(types = IngredientCollection.class)
+    final List<IngredientResponse> ingredients = new ArrayList<>();
+
+    private interface IngredientCollection {
+        boolean add(IngredientResponse ingredient);
+
+        boolean remove(IngredientResponse ingredient);
     }
 
-    public void removeCategory(CategoryResponse category) {
-        this.categories.remove(category);
+    private interface TagCollection {
+        boolean add(TagResponse tag);
+
+        boolean remove(TagResponse tag);
     }
 
-    Collection<TagResponse> tags = new ArrayList<>();
+    private interface TaxCollection {
+        boolean add(TaxResponse tax);
 
-    public void addTag(TagResponse tag) {
-        this.tags.add(tag);
+        boolean remove(TaxResponse tax);
     }
 
-    public void removeTag(TagResponse tag) {
-        this.tags.remove(tag);
+    private interface PriceCollection {
+        boolean add(PriceResponse price);
+
+        boolean remove(PriceResponse price);
     }
 
-    Collection<IngredientResponse> ingredients = new ArrayList<>();
+    private interface CategoryCollection {
+        boolean add(CategoryResponse category);
 
-    public void addIngredient(IngredientResponse ingredient) {
-        this.ingredients.add(ingredient);
-    }
-
-    public void removeIngredient(IngredientResponse ingredient) {
-        this.ingredients.add(ingredient);
+        boolean remove(CategoryResponse category);
     }
 
 }
-

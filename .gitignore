@@ -3,3 +3,6 @@
 /target/
 fooda-backend-product.iml
 /lucene/
+
+.fake
+.ionide

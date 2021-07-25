@@ -1,19 +1,36 @@
 package be.fooda.backend.product.model.entity;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.*;
+import java.util.List;
+import java.util.UUID;
 
-import javax.persistence.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 // LOMBOK
-@Getter
-@Setter
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of = {"id"})
 
 // JPA
 @Entity
@@ -51,13 +68,16 @@ public class ProductEntity {
     @FullTextField
     @Enumerated(EnumType.STRING)
     TypeEntity type;
-
+    
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    Collection<PriceEntity> prices = new ArrayList<>();
+    List<PriceEntity> prices;
 
-    public void setPrices(Collection<PriceEntity> prices) {
-        this.prices = prices.stream().map(this::setOnePrice).collect(Collectors.toList());
+    public void setPrices(List<PriceEntity> prices) {
+        for (int index = 0; index < prices.size(); index++) {
+            prices.get(index).setProduct(this);
+        }
+        this.prices = prices;
     }
 
     public void addPrice(PriceEntity price) {
@@ -70,14 +90,9 @@ public class ProductEntity {
         this.prices.remove(price);
     }
 
-    PriceEntity setOnePrice(PriceEntity price) {
-        price.setProduct(this);
-        return price;
-    }
-
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    Collection<TaxEntity> taxes = new ArrayList<>();
+    List<TaxEntity> taxes;
 
     public void addTax(TaxEntity tax) {
         tax.setProduct(this);
@@ -89,20 +104,19 @@ public class ProductEntity {
         this.taxes.remove(tax);
     }
 
-    public void setTaxes(Collection<TaxEntity> taxes) {
-        this.taxes = taxes.stream().map(this::setOneTax).collect(Collectors.toList());
-    }
+    public void setTaxes(List<TaxEntity> taxes) {
+        for (int index = 0; index < taxes.size(); index++) {
+            taxes.get(index).setProduct(this);
+        }
 
-    TaxEntity setOneTax(TaxEntity tax) {
-        tax.setProduct(this);
-        return tax;
+        this.taxes = taxes;
     }
 
     String defaultImageId;
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    Collection<CategoryEntity> categories = new ArrayList<>();
+    List<CategoryEntity> categories;
 
     public void addCategory(CategoryEntity category) {
         category.setProduct(this);
@@ -114,18 +128,16 @@ public class ProductEntity {
         this.categories.remove(category);
     }
 
-    public void setCategories(Collection<CategoryEntity> categories) {
-        this.categories = categories.stream().map(this::setOneCategory).collect(Collectors.toList());
-    }
-
-    CategoryEntity setOneCategory(CategoryEntity category) {
-        category.setProduct(this);
-        return category;
+    public void setCategories(List<CategoryEntity> categories) {
+        for(int index = 0; index < categories.size(); index++){
+            categories.get(index).setProduct(this);
+        }
+        this.categories = categories;
     }
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    Collection<TagEntity> tags = new ArrayList<>();
+    List<TagEntity> tags;
 
     public void addTag(TagEntity tag) {
         tag.setProduct(this);
@@ -137,19 +149,17 @@ public class ProductEntity {
         this.tags.remove(tag);
     }
 
-    public void setTags(Collection<TagEntity> tags) {
-        this.tags = tags.stream().map(this::setOneTag).collect(Collectors.toList());
+    public void setTags(List<TagEntity> tags) {
+        for(int index = 0; index < tags.size(); index++){
+            tags.get(index).setProduct(this);
+        }
 
-    }
-
-    TagEntity setOneTag(TagEntity tag) {
-        tag.setProduct(this);
-        return tag;
+        this.tags = tags;
     }
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    Collection<IngredientEntity> ingredients = new ArrayList<>();
+    List<IngredientEntity> ingredients;
 
     public void addIngredient(IngredientEntity ingredient) {
         ingredient.setProduct(this);
@@ -158,47 +168,14 @@ public class ProductEntity {
 
     public void removeIngredient(IngredientEntity ingredient) {
         ingredient.setProduct(this);
-        this.ingredients.add(ingredient);
+        this.ingredients.remove(ingredient);
     }
 
-    public void setIngredients(Collection<IngredientEntity> ingredients) {
-        this.ingredients = ingredients.stream().map(this::setOneIngredient).collect(Collectors.toList());
-    }
-
-    IngredientEntity setOneIngredient(IngredientEntity ingredient) {
-        ingredient.setProduct(this);
-        return ingredient;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    public void setIngredients(List<IngredientEntity> ingredients) {
+        for(int index = 0; index < ingredients.size(); index++){
+            ingredients.get(index).setProduct(this);
         }
-        if (!(o instanceof ProductEntity)) {
-            return false;
-        }
-        ProductEntity that = (ProductEntity) o;
-        return Objects.equals(getId(), that.getId());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"ProductEntity\":{" + "                        \"id\":" + getId()
-                + ",                         \"isActive\":\"" + isActive + "\""
-                + ",                         \"title\":\"" + getTitle() + "\"" + ",                         \"eTrackingId\":\""
-                + eTrackingId + "\"" + ",                         \"description\":\"" + description + "\""
-                + ",                         \"limitPerOrder\":\"" + limitPerOrder + "\""
-                + ",                         \"isFeatured\":\"" + isFeatured + "\""
-                + ",                         \"storeId\":" + getStoreId() + ",                         \"type\":\"" + type + "\""
-                + ",                         \"prices\":" + prices + ",                         \"taxes\":" + taxes
-                + ",                         \"defaultImageId\":" + getDefaultImageId()
-                + ",                         \"categories\":" + categories + ",                         \"tags\":"
-                + tags + ",                         \"ingredients\":" + ingredients + "}}";
+        this.ingredients = ingredients;
     }
 }

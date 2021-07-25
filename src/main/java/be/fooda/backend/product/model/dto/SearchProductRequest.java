@@ -2,6 +2,7 @@ package be.fooda.backend.product.model.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.Delegate;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDateTime;
@@ -24,57 +25,51 @@ public class SearchProductRequest {
     UUID storeId;
     SearchTypeRequest type;
 
-    Collection<SearchPriceRequest> prices;
+    @Delegate(types = PriceCollection.class)
+    final List<SearchPriceRequest> prices = new ArrayList<>();
 
-    public void addPrice(SearchPriceRequest price) {
-        this.prices.add(price);
-    }
-
-    public void removePrice(SearchPriceRequest price) {
-        this.prices.remove(price);
-    }
-
-    Collection<SearchTaxRequest> taxes;
-
-    public void addTax(SearchTaxRequest tax) {
-        this.taxes.add(tax);
-    }
-
-    public void removeTax(SearchTaxRequest tax) {
-        this.taxes.remove(tax);
-    }
+    @Delegate(types = TaxCollection.class)
+    final List<SearchTaxRequest> taxes = new ArrayList<>();
 
     String defaultImageId;
 
-    Collection<SearchCategoryRequest> categories;
+    @Delegate(types = CategoryCollection.class)
+    final List<SearchCategoryRequest> categories = new ArrayList<>();
 
-    public void addCategory(SearchCategoryRequest category) {
-        this.categories.add(category);
+    @Delegate(types = TagCollection.class)
+    final List<SearchTagRequest> tags = new ArrayList<>();
+
+    @Delegate(types = IngredientCollection.class)
+    final List<SearchIngredientRequest> ingredients = new ArrayList<>();
+
+    private interface IngredientCollection {
+        boolean add(SearchIngredientRequest ingredient);
+
+        boolean remove(SearchIngredientRequest ingredient);
     }
 
-    public void removeCategory(SearchCategoryRequest category) {
-        this.categories.remove(category);
+    private interface TagCollection {
+        boolean add(SearchTagRequest tag);
+
+        boolean remove(SearchTagRequest tag);
     }
 
-    Collection<SearchTagRequest> tags;
+    private interface TaxCollection {
+        boolean add(SearchTaxRequest tax);
 
-    public void addTag(SearchTagRequest tag) {
-        this.tags.add(tag);
+        boolean remove(SearchTaxRequest tax);
     }
 
-    public void removeTag(SearchTagRequest tag) {
-        this.tags.remove(tag);
+    private interface PriceCollection {
+        boolean add(SearchPriceRequest price);
+
+        boolean remove(SearchPriceRequest price);
     }
 
-    Collection<SearchIngredientRequest> ingredients;
+    private interface CategoryCollection {
+        boolean add(SearchCategoryRequest category);
 
-    public void addIngredient(SearchIngredientRequest ingredient) {
-        this.ingredients.add(ingredient);
-    }
-
-    public void removeIngredient(SearchIngredientRequest ingredient) {
-        this.ingredients.add(ingredient);
+        boolean remove(SearchCategoryRequest category);
     }
 
 }
-

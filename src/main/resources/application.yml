@@ -3,9 +3,8 @@ server:
 
 spring:
   jpa:
-    show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     database-platform: org.hibernate.dialect.MySQL5Dialect
     properties:
       hibernate:
@@ -13,7 +12,6 @@ spring:
           backend:
             directory:
               type: local-heap
-        format-sql: true
   data:
     jpa:
       repositories:

@@ -1,21 +1,31 @@
 package be.fooda.backend.product.model.entity;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Objects;
-import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 // LOMBOK
-@Getter
-@Setter
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of = {"id"})
 
 // JPA
 @Entity
@@ -32,34 +42,9 @@ public class IngredientEntity {
     @GenericField
     BigDecimal price = BigDecimal.valueOf(0.0);
 
+    @ToString.Exclude
     @JoinColumn(name = "product_id")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof IngredientEntity)) {
-            return false;
-        }
-        IngredientEntity that = (IngredientEntity) o;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"IngredientEntity\":{"
-                + "                        \"ingredientId\":" + getId()
-                + ",                         \"title\":\"" + title + "\""
-                + ",                         \"price\":\"" + price + "\""
-                + ",                         \"productId\":" + product.getId()
-                + "}}";
-    }
 }

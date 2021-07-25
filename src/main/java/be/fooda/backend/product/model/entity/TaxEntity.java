@@ -1,21 +1,32 @@
 package be.fooda.backend.product.model.entity;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import java.util.UUID;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.validator.constraints.Range;
 
-import javax.persistence.*;
-import java.util.Objects;
-import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 // LOMBOK
-@Getter
-@Setter
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EqualsAndHashCode(of = {"id"})
 
 // JPA
 @Entity
@@ -36,35 +47,8 @@ public class TaxEntity {
 
     Boolean isDefault = Boolean.FALSE;
 
+    @ToString.Exclude
     @JoinColumn(name = "product_id")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof TaxEntity)) {
-            return false;
-        }
-        final var taxEntity = (TaxEntity) o;
-        return Objects.equals(getId(), taxEntity.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"TaxEntity\":{"
-                + "                        \"id\":" + getId()
-                + ",                         \"title\":\"" + title + "\""
-                + ",                         \"percentage\":\"" + percentage + "\""
-                + ",                         \"isDefault\":\"" + isDefault + "\""
-                + ",                         \"product\":" + product.getId()
-                + "}}";
-    }
 }
