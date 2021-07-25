@@ -71,10 +71,11 @@ public class ProductFlow {
         ProductEntity entity = productMapper.toEntity(request);
 
         // SAVE_TO_DB(ENTITY)
-        productRepository.save(entity);
+        final var savedEntity = productRepository.save(entity);
 
         // LOG
-        log.info("CREATE A SINGLE PRODUCT: " + "\n\n" + jsonMapper.writeValueAsString(entity) + "\n\n");
+        final var response = productMapper.toResponse(savedEntity);
+        log.info("CREATE A SINGLE PRODUCT: " + "\n\n" + jsonMapper.writeValueAsString(response) + "\n\n");
 
     }
 
@@ -101,10 +102,11 @@ public class ProductFlow {
         ProductEntity entityToUpdate = productMapper.toEntity(request, entity);
 
         // UPDATE_FROM_DB
-        productRepository.save(entityToUpdate);
+        final var updatedEntity = productRepository.save(entityToUpdate);
 
         // LOG
-        log.info("UPDATE A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(entity) + "\n\n");
+        final var response = productMapper.toResponse(updatedEntity);
+        log.info("UPDATE A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(response) + "\n\n");
 
     }
 
@@ -191,6 +193,15 @@ public class ProductFlow {
         log.info("PRODUCT EXISTS BY UNIQUE FIELDS: " + "\n\n" + jsonMapper.writeValueAsString(result) + "\n\n");
 
         return response;
+    }
+
+    public void deleteById(UUID id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+        // TODO: implement delete by id..
+    }
+
+    public void deleteByIdPermanently(UUID id)
+            throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+        // TODO: implement delete by id..
     }
 
     // EXISTS_BY_ID
