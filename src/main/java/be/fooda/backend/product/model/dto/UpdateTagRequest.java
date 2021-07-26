@@ -1,18 +1,20 @@
 package be.fooda.backend.product.model.dto;
 
-import lombok.*;
+import java.io.Serializable;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.jackson.Jacksonized;
 
-import java.util.*;
-
-@Jacksonized
-@Getter
-@Setter
+// LOMBOK
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateTagRequest {
+@EqualsAndHashCode(of = { "value" })
+
+public class UpdateTagRequest implements Serializable{
 
     String value;
 

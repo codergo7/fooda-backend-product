@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public enum TypeEntity {
 
-    SIMPLE("A product which have no variations"),
-    GROUPED("A product which has variations"),
+    SIMPLE("A product which have no variations"), GROUPED("A product which has variations"),
     COMPLEX("multiple products in a product");
 
     String value;

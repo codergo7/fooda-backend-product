@@ -1,25 +1,20 @@
 package be.fooda.backend.product.model.dto;
 
-import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import java.io.Serializable;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.jackson.Jacksonized;
 
-@Jacksonized
-@Getter
-@Setter
+// LOMBOK
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateCategoryRequest {
+@EqualsAndHashCode(of = { "title" })
+
+public class CreateCategoryRequest implements Serializable{
 
     String title;
     Byte[] icon;

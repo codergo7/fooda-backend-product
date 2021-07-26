@@ -4,15 +4,16 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.jackson.Jacksonized;
 
+import java.io.Serializable;
 import java.util.*;
 
-@Jacksonized
-@Getter
-@Setter
+// LOMBOK
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateTaxRequest {
+@EqualsAndHashCode(of = { "title" })
+
+public class UpdateTaxRequest implements Serializable{
 
     String title;
     Double percentage;

@@ -1,19 +1,22 @@
 package be.fooda.backend.product.model.dto;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.jackson.Jacksonized;
-
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.UUID;
 
-@Jacksonized
-@Getter
-@Setter
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+// LOMBOK
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IngredientResponse {
+@EqualsAndHashCode(of = { "ingredientId" })
+
+public class IngredientResponse implements Serializable{
 
     UUID ingredientId;
     String title;

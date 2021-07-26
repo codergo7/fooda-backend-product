@@ -1,19 +1,24 @@
 package be.fooda.backend.product.model.dto;
 
-import lombok.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.jackson.Jacksonized;
 
-import java.util.*;
-
-@Jacksonized
-@Getter
-@Setter
+// LOMBOK
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductResponse {
+@EqualsAndHashCode(of = { "productId" })
+
+public class ProductResponse implements Serializable {
 
     UUID productId;
     Boolean isActive;
@@ -22,25 +27,27 @@ public class ProductResponse {
     String description;
     Integer limitPerOrder;
     Boolean isFeatured;
-    String storeId;
+
+    StoreResponse store;
+    
     TypeResponse type;
 
     @Delegate(types = PriceCollection.class)
-    final List<PriceResponse> prices = new ArrayList<>();
+    private final List<PriceResponse> prices = new ArrayList<>();
 
     @Delegate(types = TaxCollection.class)
-    final List<TaxResponse> taxes = new ArrayList<>();
+    private final List<TaxResponse> taxes = new ArrayList<>();
 
-    String defaultImageId;
+    MediaResponse defaultImage;
 
     @Delegate(types = CategoryCollection.class)
-    final List<CategoryResponse> categories = new ArrayList<>();
+    private final List<CategoryResponse> categories = new ArrayList<>();
 
     @Delegate(types = TagCollection.class)
-    final List<TagResponse> tags = new ArrayList<>();
+    private final List<TagResponse> tags = new ArrayList<>();
 
     @Delegate(types = IngredientCollection.class)
-    final List<IngredientResponse> ingredients = new ArrayList<>();
+    private final List<IngredientResponse> ingredients = new ArrayList<>();
 
     private interface IngredientCollection {
         boolean add(IngredientResponse ingredient);

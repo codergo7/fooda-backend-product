@@ -1,5 +1,6 @@
 package be.fooda.backend.product.model.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 
@@ -34,10 +37,10 @@ import lombok.experimental.FieldDefaults;
 // JPA
 @Entity
 
-public class PriceEntity {
+public class PriceEntity implements Serializable  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     UUID id;
 
     @FullTextField

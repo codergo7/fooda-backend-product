@@ -1,5 +1,6 @@
 package be.fooda.backend.product.model.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = { "title", "storeId" })
 
-public class CreateProductRequest {
+public class CreateProductRequest implements Serializable{
 
     String title;
 

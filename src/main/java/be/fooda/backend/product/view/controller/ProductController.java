@@ -156,7 +156,7 @@ public class ProductController {
               // RETURN_SUCCESS
             return ResponseEntity.status(HttpStatus.FOUND).body(Objects.requireNonNull(response.product));
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         }
     }
 

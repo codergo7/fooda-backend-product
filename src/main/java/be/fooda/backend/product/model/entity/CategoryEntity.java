@@ -1,5 +1,6 @@
 package be.fooda.backend.product.model.entity;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 
 import lombok.AccessLevel;
@@ -26,15 +28,15 @@ import lombok.experimental.FieldDefaults;
 @Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = { "id" })
 
 // JPA
 @Entity
 
-public class CategoryEntity {
+public class CategoryEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     UUID id;
 
     @FullTextField
@@ -45,7 +47,7 @@ public class CategoryEntity {
     Byte[] icon;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     ProductEntity product;
 
 }

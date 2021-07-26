@@ -29,6 +29,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,6 +52,7 @@ public class ProductFlow {
      */
 
     // CREATE_PRODUCT(REQUEST)
+    @Transactional
     public void createProduct(CreateProductRequest request)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
@@ -80,6 +83,7 @@ public class ProductFlow {
     }
 
     // UPDATE_PRODUCT(UNIQUE_IDENTIFIER, REQUEST)
+    @Transactional
     public void updateProduct(UUID id, UpdateProductRequest request)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
@@ -111,6 +115,7 @@ public class ProductFlow {
     }
 
     // FIND_ALL(PAGE_NO, PAGE_SIZE)
+    @Transactional
     public List<ProductResponse> findAll(int pageNo, int pageSize)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
@@ -128,9 +133,11 @@ public class ProductFlow {
     }
 
     // FIND_BY_ID
+    @Transactional
     public ProductResponse findById(UUID id)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
+        // NULL_CHECK
         if (Objects.isNull(id)) {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_ID_IS_REQUIRED.getDescription());
         }
@@ -138,20 +145,26 @@ public class ProductFlow {
         // READ_FROM_DB(ID)
         Optional<ProductEntity> oEntity = productRepository.findById(id);
 
+        // LOG
+        log.info("REQUEST -> FIND A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(oEntity) + "\n\n");
+
         if (oEntity.isEmpty()) {
             throw new ResourceNotFoundException(HttpFailureMassages.PRODUCT_NOT_FOUND.getDescription());
         }
 
+        // MAP_ENTITY_TO_RESPONSE
         final var response = productMapper.toResponse(oEntity.get());
 
         // LOG
-        log.info("FIND A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(response) + "\n\n");
+        log.info("RESPONSE -> FIND A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(response)
+                + "\n\n");
 
-        // MAP & RETURN
+        // RETURN
         return response;
     }
 
     // FIND_BY_TITLE
+    @Transactional
     public List<ProductResponse> findByTitle(String title, int pageNo, int pageSize)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
@@ -180,8 +193,10 @@ public class ProductFlow {
     }
 
     // EXISTS_BY_ID
+    @Transactional
     public Boolean existsById(UUID id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
+        // NULL_VALIDATION
         if (Objects.isNull(id)) {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_ID_IS_REQUIRED.getDescription());
         }
@@ -195,19 +210,34 @@ public class ProductFlow {
         return response;
     }
 
+    @Transactional
     public void deleteById(UUID id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+
+        // NULL_VALIDATION
+        if (Objects.isNull(id)) {
+            throw new NullPointerException(HttpFailureMassages.PRODUCT_ID_IS_REQUIRED.getDescription());
+        }
+
         // TODO: implement delete by id..
     }
 
+    @Transactional
     public void deleteByIdPermanently(UUID id)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+        // NULL_VALIDATION
+        if (Objects.isNull(id)) {
+            throw new NullPointerException(HttpFailureMassages.PRODUCT_ID_IS_REQUIRED.getDescription());
+        }
+
         // TODO: implement delete by id..
     }
 
+    @Transactional
     // EXISTS_BY_ID
     public Boolean existsByUniqueFields(String title, String storeId)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
+        // NULL_VALIDATION
         if (Objects.isNull(title)) {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_TITLE_IS_REQUIRED.getDescription());
         }

@@ -1,18 +1,20 @@
 package be.fooda.backend.product.model.dto;
 
-import lombok.*;
+import java.io.Serializable;
+import java.util.UUID;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.jackson.Jacksonized;
 
-import java.util.*;
-
-@Jacksonized
-@Getter
-@Setter
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryResponse {
+@EqualsAndHashCode(of = { "categoryId" })
+
+public class CategoryResponse implements Serializable {
 
     UUID categoryId;
     String title;

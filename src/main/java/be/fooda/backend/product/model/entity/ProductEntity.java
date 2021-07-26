@@ -1,5 +1,6 @@
 package be.fooda.backend.product.model.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
@@ -31,7 +34,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = { "id" })
 
 // JPA
 @Entity
@@ -39,11 +42,10 @@ import lombok.experimental.FieldDefaults;
 // HIBERNATE SEARCH
 @Indexed
 
-public class ProductEntity {
+public class ProductEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @KeywordField
+    @GeneratedValue
     UUID id;
 
     Boolean isActive = Boolean.TRUE;
@@ -69,10 +71,10 @@ public class ProductEntity {
     @FullTextField
     @Enumerated(EnumType.STRING)
     TypeEntity type;
-    
+
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<PriceEntity> prices = new ArrayList<>();
+    private List<PriceEntity> prices = new ArrayList<>();
 
     public void setPrices(List<PriceEntity> prices) {
         for (int index = 0; index < prices.size(); index++) {
@@ -93,7 +95,7 @@ public class ProductEntity {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<TaxEntity> taxes = new ArrayList<>();
+    private List<TaxEntity> taxes = new ArrayList<>();
 
     public void addTax(TaxEntity tax) {
         tax.setProduct(this);
@@ -112,12 +114,12 @@ public class ProductEntity {
 
         this.taxes = taxes;
     }
-
+    
     String defaultImageId;
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<CategoryEntity> categories = new ArrayList<>();
+    private List<CategoryEntity> categories = new ArrayList<>();
 
     public void addCategory(CategoryEntity category) {
         category.setProduct(this);
@@ -130,7 +132,7 @@ public class ProductEntity {
     }
 
     public void setCategories(List<CategoryEntity> categories) {
-        for(int index = 0; index < categories.size(); index++){
+        for (int index = 0; index < categories.size(); index++) {
             categories.get(index).setProduct(this);
         }
         this.categories = categories;
@@ -138,7 +140,7 @@ public class ProductEntity {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<TagEntity> tags = new ArrayList<>();
+    private List<TagEntity> tags = new ArrayList<>();
 
     public void addTag(TagEntity tag) {
         tag.setProduct(this);
@@ -151,7 +153,7 @@ public class ProductEntity {
     }
 
     public void setTags(List<TagEntity> tags) {
-        for(int index = 0; index < tags.size(); index++){
+        for (int index = 0; index < tags.size(); index++) {
             tags.get(index).setProduct(this);
         }
 
@@ -160,7 +162,7 @@ public class ProductEntity {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<IngredientEntity> ingredients = new ArrayList<>();
+    private List<IngredientEntity> ingredients = new ArrayList<>();
 
     public void addIngredient(IngredientEntity ingredient) {
         ingredient.setProduct(this);
@@ -173,7 +175,7 @@ public class ProductEntity {
     }
 
     public void setIngredients(List<IngredientEntity> ingredients) {
-        for(int index = 0; index < ingredients.size(); index++){
+        for (int index = 0; index < ingredients.size(); index++) {
             ingredients.get(index).setProduct(this);
         }
 

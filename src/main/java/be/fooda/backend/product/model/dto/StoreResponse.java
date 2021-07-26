@@ -1,20 +1,21 @@
 package be.fooda.backend.product.model.dto;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.jackson.Jacksonized;
-
-import java.io.Serializable;
-import java.util.*;
 
 // LOMBOK
 @Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = { "title" })
+@EqualsAndHashCode(of = { "storeId" })
 
-public class SearchTaxRequest implements Serializable{
+public class StoreResponse {
+
+    String storeId; 
 
     String title;
-    Double percentage;
+
 }

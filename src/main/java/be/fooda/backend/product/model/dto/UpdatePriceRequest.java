@@ -1,23 +1,22 @@
 package be.fooda.backend.product.model.dto;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.jackson.Jacksonized;
-
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
-import java.util.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
-@Jacksonized
-@Getter
-@Setter
+// LOMBOK
+@Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdatePriceRequest {
+@EqualsAndHashCode(of = { "title", "amount" })
+
+public class UpdatePriceRequest implements Serializable{
 
     String title;
     BigDecimal amount;
