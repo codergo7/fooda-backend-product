@@ -1,28 +1,5 @@
 package be.fooda.backend.product.service.flow;
 
-import be.fooda.backend.product.dao.ProductIndexer;
-import be.fooda.backend.product.dao.ProductRepository;
-import be.fooda.backend.product.model.dto.CreateProductRequest;
-import be.fooda.backend.product.model.dto.ProductResponse;
-import be.fooda.backend.product.model.dto.UpdateProductRequest;
-import be.fooda.backend.product.model.entity.ProductEntity;
-import be.fooda.backend.product.model.http.HttpFailureMassages;
-import be.fooda.backend.product.service.exception.ResourceNotFoundException;
-import be.fooda.backend.product.service.mapper.ProductMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,15 +11,40 @@ import javax.transaction.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import be.fooda.backend.product.dao.ProductIndexer;
+import be.fooda.backend.product.dao.ProductRepository;
+import be.fooda.backend.product.model.dto.CreateProductRequest;
+import be.fooda.backend.product.model.dto.ProductResponse;
+import be.fooda.backend.product.model.dto.UpdateProductRequest;
+import be.fooda.backend.product.model.entity.ProductEntity;
+import be.fooda.backend.product.model.http.HttpFailureMassages;
+import be.fooda.backend.product.service.exception.ResourceNotFoundException;
+import be.fooda.backend.product.service.mapper.ProductMapper;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+
+// LOMBOK
 @Slf4j
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+
+// SPRING
 @Service
 public class ProductFlow {
 
-    private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
-    private final ProductIndexer productIndexer;
-    private final ObjectMapper jsonMapper;
+    ProductRepository productRepository;
+    ProductMapper productMapper;
+    ProductIndexer productIndexer;
+    ObjectMapper jsonMapper;
 
     /*
      * Responsibilities of this class: 1- All scenarios (requirements) will be
@@ -53,13 +55,13 @@ public class ProductFlow {
 
     // CREATE_PRODUCT(REQUEST)
     @Transactional
-    public void createProduct(CreateProductRequest request)
+    public UUID createProduct(CreateProductRequest request)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // IF(NULL)
         if (Objects.isNull(request)) {
             // THROW_EXCEPTION
-            throw new NullPointerException(HttpFailureMassages.FAILED_TO_CREATE_PRODUCT.getDescription());
+            throw new NullPointerException(HttpFailureMassages.PRODUCT_IS_REQUIRED.getDescription());
         }
 
         // IF(PRODUCT_EXISTS)
@@ -79,6 +81,9 @@ public class ProductFlow {
         // LOG
         final var response = productMapper.toResponse(savedEntity);
         log.info("CREATE A SINGLE PRODUCT: " + "\n\n" + jsonMapper.writeValueAsString(response) + "\n\n");
+
+        // RETURN_SAVED_ID
+        return response.getProductId();
 
     }
 

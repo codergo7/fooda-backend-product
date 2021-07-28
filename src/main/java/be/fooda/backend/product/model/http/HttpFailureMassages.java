@@ -37,7 +37,8 @@ public enum HttpFailureMassages {
     FAILED_TO_UPDATE_PRODUCT("There has been a problem while updating the PRODUCT"), 
     PRODUCT_ID_IS_REQUIRED("Product ID is required"), 
     PRODUCT_TITLE_IS_REQUIRED("Product title is required"), 
-    STORE_ID_IS_REQUIRED("Store ID is required");
+    STORE_ID_IS_REQUIRED("Store ID is required"),
+    PRODUCT_IS_REQUIRED("Product information is required");
 
     private final String description;
 }

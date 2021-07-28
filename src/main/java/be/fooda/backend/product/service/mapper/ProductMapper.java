@@ -1,14 +1,19 @@
 package be.fooda.backend.product.service.mapper;
 
+import java.util.List;
+import java.util.Set;
+
+import org.mapstruct.CollectionMappingStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+
 import be.fooda.backend.product.model.dto.CreateProductRequest;
 import be.fooda.backend.product.model.dto.ProductResponse;
-import be.fooda.backend.product.model.dto.StoreResponse;
 import be.fooda.backend.product.model.dto.UpdateProductRequest;
 import be.fooda.backend.product.model.entity.ProductEntity;
-import org.mapstruct.*;
-
-import java.util.Set;
-import java.util.List;
 
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS, collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ProductMapper {

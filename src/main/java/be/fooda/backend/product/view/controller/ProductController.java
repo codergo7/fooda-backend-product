@@ -63,16 +63,18 @@ public class ProductController {
 
     // CREATING_NEW_PRODUCT
     @PostMapping(POST_SINGLE)
-    public ResponseEntity createProduct(@RequestBody @Valid CreateProductRequest request) {
+    public ResponseEntity<String> createProduct(@RequestBody @Valid CreateProductRequest request) {
 
         // CREATE_FLOW
         try {
-            productFlow.createProduct(request);
+            UUID savedId = productFlow.createProduct(request);
             // RETURN_SUCCESS
-            return ResponseEntity.status(HttpStatus.CREATED).body(HttpSuccessMassages.PRODUCT_CREATED.getDescription());
+            return ResponseEntity.status(HttpStatus.CREATED).header("savedId", savedId.toString())
+                    .body(HttpSuccessMassages.PRODUCT_CREATED.getDescription());
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
+
     }
 
     // UPDATE_SINGLE_PRODUCT
@@ -126,16 +128,19 @@ public class ProductController {
     public ResponseEntity findAllProducts(@RequestParam(value = PAGE_NUMBER, required = false) Integer pageNo,
             @RequestParam(value = PAGE_SIZE, required = false) Integer pageSize) {
 
-        // SET DEFAULT VALUES ..
-        pageNo = PAGE_NUMBER_DEFAULT_VALUE;
-        pageSize = PAGE_SIZE_DEFAULT_VALUE;
+        // SET DEFAULT VALUES IF EMPTY..
+        if (Objects.isNull(pageNo)) {
+            pageNo = PAGE_NUMBER_DEFAULT_VALUE;
+        }
 
-        final var responses = new LinkedList<>();
+        if (Objects.isNull(pageSize)) {
+            pageSize = PAGE_SIZE_DEFAULT_VALUE;
+        }
 
         // START_SELECT_FLOW
         try {
             // RETURN_ALL_PRODUCTS_IN_PAGES
-            responses.addAll(productFlow.findAll(pageNo, pageSize));
+            final var responses = productFlow.findAll(pageNo, pageSize);
             return ResponseEntity.status(HttpStatus.FOUND).body(responses);
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
@@ -146,14 +151,14 @@ public class ProductController {
     @GetMapping(GET_BY_ID)
     public ResponseEntity findProductById(@RequestParam("productId") String id) {
 
-        final var response = new Object(){
+        final var response = new Object() {
             public ProductResponse product = null;
         };
-        
+
         // START_SELECT_FLOW
         try {
             response.product = productFlow.findById(UUID.fromString(id));
-              // RETURN_SUCCESS
+            // RETURN_SUCCESS
             return ResponseEntity.status(HttpStatus.FOUND).body(Objects.requireNonNull(response.product));
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
@@ -195,12 +200,12 @@ public class ProductController {
     public ResponseEntity existsByUniqueFields(@RequestParam("name") String name,
             @RequestParam("storeId") String storeId) {
 
-        final var response = new Object(){
+        final var response = new Object() {
             public boolean exists = false;
-        }; 
+        };
 
-         // START_SELECT_FLOW
-         try {
+        // START_SELECT_FLOW
+        try {
             response.exists = productFlow.existsByUniqueFields(name, storeId);
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
