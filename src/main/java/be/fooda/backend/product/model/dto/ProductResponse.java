@@ -2,7 +2,9 @@ package be.fooda.backend.product.model.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.AccessLevel;
@@ -29,28 +31,59 @@ public class ProductResponse implements Serializable {
     Boolean isFeatured;
 
     StoreResponse store;
-    
+
     TypeResponse type;
 
-    private final List<PriceResponse> prices = new ArrayList<>();
+    private final Set<PriceResponse> prices = new LinkedHashSet<>();
 
     public void addPrice(PriceResponse price) {
-
+        this.prices.add(price);
     }
 
-    public void removePrice(){
-        
+    public void removePrice(PriceResponse price) {
+        this.prices.remove(price);
     }
 
-    private final List<TaxResponse> taxes = new ArrayList<>();
+    private final Set<TaxResponse> taxes = new LinkedHashSet<>();
+
+    public void addTax(TaxResponse tax){
+        this.taxes.add(tax);
+    }
+
+    public void removeTax(TaxResponse tax){
+        this.taxes.remove(tax);
+    }
 
     MediaResponse defaultImage;
 
-    private final List<CategoryResponse> categories = new ArrayList<>();
+    private final Set<CategoryResponse> categories = new LinkedHashSet<>();
 
-    private final List<TagResponse> tags = new ArrayList<>();
+    public void addCategory(CategoryResponse category){
+        this.categories.add(category);
+    }
 
-    private final List<IngredientResponse> ingredients = new ArrayList<>();
+    public void removeCategory(CategoryResponse category){
+        this.categories.remove(category);
+    }
 
+    private final Set<TagResponse> tags = new LinkedHashSet<>();
+
+    public void addTag(TagResponse tag){
+        this.tags.add(tag);
+    }
+
+    public void removeTag(TagResponse tag){
+        this.tags.remove(tag);
+    }
+
+    private final Set<IngredientResponse> ingredients = new LinkedHashSet<>();
+
+    public void addIngredient(IngredientResponse ingredient){
+        this.ingredients.add(ingredient);
+    }
+
+    public void removeIngredient(IngredientResponse ingredient){
+        this.ingredients.remove(ingredient);
+    }
 
 }

@@ -1,15 +1,14 @@
 package be.fooda.backend.product.model.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
 
 // LOMBOK
@@ -29,51 +28,56 @@ public class SearchProductRequest implements Serializable{
     UUID storeId;
     SearchTypeRequest type;
 
-    @Delegate(types = PriceCollection.class)
-    final List<SearchPriceRequest> prices = new ArrayList<>();
+    private final Set<SearchPriceRequest> prices = new LinkedHashSet<>();
 
-    @Delegate(types = TaxCollection.class)
-    final List<SearchTaxRequest> taxes = new ArrayList<>();
+    public void addPrice(SearchPriceRequest price){
+        this.prices.add(price);
+    }
+
+    public void removePrice(SearchPriceRequest price){
+        this.prices.remove(price);
+    }
+
+    private final Set<SearchTaxRequest> taxes = new LinkedHashSet<>();
+
+    public void addTax(SearchTaxRequest tax){
+        this.taxes.add(tax);
+    }
+
+    public void removeTax(SearchTaxRequest tax){
+        this.taxes.remove(tax);
+    }
 
     String defaultImageId;
 
-    @Delegate(types = CategoryCollection.class)
-    final List<SearchCategoryRequest> categories = new ArrayList<>();
+    private final Set<SearchCategoryRequest> categories = new LinkedHashSet<>();
 
-    @Delegate(types = TagCollection.class)
-    final List<SearchTagRequest> tags = new ArrayList<>();
-
-    @Delegate(types = IngredientCollection.class)
-    final List<SearchIngredientRequest> ingredients = new ArrayList<>();
-
-    private interface IngredientCollection {
-        boolean add(SearchIngredientRequest ingredient);
-
-        boolean remove(SearchIngredientRequest ingredient);
+    public void addCategory(SearchCategoryRequest category){
+        this.categories.add(category);
     }
 
-    private interface TagCollection {
-        boolean add(SearchTagRequest tag);
-
-        boolean remove(SearchTagRequest tag);
+    public void removeCategory(SearchCategoryRequest category){
+        this.categories.remove(category);
     }
 
-    private interface TaxCollection {
-        boolean add(SearchTaxRequest tax);
+    private final Set<SearchTagRequest> tags = new LinkedHashSet<>();
 
-        boolean remove(SearchTaxRequest tax);
+    public void addTag(SearchTagRequest tag){
+        this.tags.add(tag);
     }
 
-    private interface PriceCollection {
-        boolean add(SearchPriceRequest price);
-
-        boolean remove(SearchPriceRequest price);
+    public void removeTag(SearchTagRequest tag){
+        this.tags.remove(tag);
     }
 
-    private interface CategoryCollection {
-        boolean add(SearchCategoryRequest category);
+    private final Set<SearchIngredientRequest> ingredients = new LinkedHashSet<>();
 
-        boolean remove(SearchCategoryRequest category);
+    public void addIngredient(SearchIngredientRequest ingredient){
+        this.ingredients.add(ingredient);
+    }
+
+    public void removeIngredient(SearchIngredientRequest ingredient){
+        this.ingredients.remove(ingredient);
     }
 
 }

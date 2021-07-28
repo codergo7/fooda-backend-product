@@ -1,8 +1,8 @@
 package be.fooda.backend.product.model.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -11,13 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
@@ -74,13 +71,13 @@ public class ProductEntity implements Serializable {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PriceEntity> prices = new ArrayList<>();
+    private Set<PriceEntity> prices = new LinkedHashSet<>();
 
-    public void setPrices(List<PriceEntity> prices) {
-        for (int index = 0; index < prices.size(); index++) {
-            prices.get(index).setProduct(this);
-        }
+    public void setPrices(Set<PriceEntity> prices) {
         this.prices = prices;
+        for (PriceEntity price : this.prices) {
+            price.setProduct(this);
+        }
     }
 
     public void addPrice(PriceEntity price) {
@@ -95,7 +92,7 @@ public class ProductEntity implements Serializable {
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TaxEntity> taxes = new ArrayList<>();
+    private Set<TaxEntity> taxes = new LinkedHashSet<>();
 
     public void addTax(TaxEntity tax) {
         tax.setProduct(this);
@@ -107,19 +104,18 @@ public class ProductEntity implements Serializable {
         this.taxes.remove(tax);
     }
 
-    public void setTaxes(List<TaxEntity> taxes) {
-        for (int index = 0; index < taxes.size(); index++) {
-            taxes.get(index).setProduct(this);
-        }
-
+    public void setTaxes(Set<TaxEntity> taxes) {
         this.taxes = taxes;
+        for(TaxEntity tax : taxes){
+            tax.setProduct(this);
+        }
     }
-    
+
     String defaultImageId;
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CategoryEntity> categories = new ArrayList<>();
+    private Set<CategoryEntity> categories = new LinkedHashSet<>();
 
     public void addCategory(CategoryEntity category) {
         category.setProduct(this);
@@ -131,16 +127,16 @@ public class ProductEntity implements Serializable {
         this.categories.remove(category);
     }
 
-    public void setCategories(List<CategoryEntity> categories) {
-        for (int index = 0; index < categories.size(); index++) {
-            categories.get(index).setProduct(this);
-        }
+    public void setCategories(Set<CategoryEntity> categories) {
         this.categories = categories;
+        for(CategoryEntity category : this.categories){
+            category.setProduct(this);
+        }
     }
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TagEntity> tags = new ArrayList<>();
+    private Set<TagEntity> tags = new LinkedHashSet<>();
 
     public void addTag(TagEntity tag) {
         tag.setProduct(this);
@@ -152,17 +148,16 @@ public class ProductEntity implements Serializable {
         this.tags.remove(tag);
     }
 
-    public void setTags(List<TagEntity> tags) {
-        for (int index = 0; index < tags.size(); index++) {
-            tags.get(index).setProduct(this);
-        }
-
+    public void setTags(Set<TagEntity> tags) {
         this.tags = tags;
+        for(TagEntity tag : tags){
+            tag.setProduct(this);
+        }
     }
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<IngredientEntity> ingredients = new ArrayList<>();
+    private Set<IngredientEntity> ingredients = new LinkedHashSet<>();
 
     public void addIngredient(IngredientEntity ingredient) {
         ingredient.setProduct(this);
@@ -174,11 +169,10 @@ public class ProductEntity implements Serializable {
         this.ingredients.remove(ingredient);
     }
 
-    public void setIngredients(List<IngredientEntity> ingredients) {
-        for (int index = 0; index < ingredients.size(); index++) {
-            ingredients.get(index).setProduct(this);
-        }
-
+    public void setIngredients(Set<IngredientEntity> ingredients) {
         this.ingredients = ingredients;
+        for(IngredientEntity ingredient : ingredients){
+            ingredient.setProduct(this);
+        }
     }
 }
