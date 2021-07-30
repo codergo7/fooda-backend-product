@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 
 public class TaxResponse implements Serializable{
 
-    UUID taxId;
+    Long taxId;
     String title;
     Double percentage;
     Boolean isDefault;

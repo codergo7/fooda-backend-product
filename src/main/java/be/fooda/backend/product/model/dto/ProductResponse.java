@@ -22,7 +22,7 @@ import lombok.experimental.FieldDefaults;
 
 public class ProductResponse implements Serializable {
 
-    UUID productId;
+    Long productId;
     Boolean isActive;
     String title;
     String eTrackingId;

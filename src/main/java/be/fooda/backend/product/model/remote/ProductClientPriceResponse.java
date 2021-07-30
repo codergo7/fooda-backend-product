@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = {"priceId"})
 
 public class ProductClientPriceResponse {
-    String productId;
-    String priceId;
+    Long productId;
+    Long priceId;
     BigDecimal amount;
     String title;
 }

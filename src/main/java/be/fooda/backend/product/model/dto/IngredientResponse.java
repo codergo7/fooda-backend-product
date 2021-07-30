@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 
 public class IngredientResponse implements Serializable{
 
-    UUID ingredientId;
+    Long ingredientId;
     String title;
     BigDecimal price;
 

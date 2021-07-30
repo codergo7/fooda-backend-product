@@ -55,7 +55,7 @@ public class ProductFlow {
 
     // CREATE_PRODUCT(REQUEST)
     @Transactional
-    public UUID createProduct(CreateProductRequest request)
+    public Long createProduct(CreateProductRequest request)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // IF(NULL)
@@ -89,7 +89,7 @@ public class ProductFlow {
 
     // UPDATE_PRODUCT(UNIQUE_IDENTIFIER, REQUEST)
     @Transactional
-    public void updateProduct(UUID id, UpdateProductRequest request)
+    public void updateProduct(Long id, UpdateProductRequest request)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // IF(NULL)
@@ -139,7 +139,7 @@ public class ProductFlow {
 
     // FIND_BY_ID
     @Transactional
-    public ProductResponse findById(UUID id)
+    public ProductResponse findById(Long id)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // NULL_CHECK
@@ -199,7 +199,7 @@ public class ProductFlow {
 
     // EXISTS_BY_ID
     @Transactional
-    public Boolean existsById(UUID id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+    public Boolean existsById(Long id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // NULL_VALIDATION
         if (Objects.isNull(id)) {
@@ -216,7 +216,7 @@ public class ProductFlow {
     }
 
     @Transactional
-    public void deleteById(UUID id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
+    public void deleteById(Long id) throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // NULL_VALIDATION
         if (Objects.isNull(id)) {
@@ -227,7 +227,7 @@ public class ProductFlow {
     }
 
     @Transactional
-    public void deleteByIdPermanently(UUID id)
+    public void deleteByIdPermanently(Long id)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
         // NULL_VALIDATION
         if (Objects.isNull(id)) {
@@ -239,7 +239,7 @@ public class ProductFlow {
 
     @Transactional
     // EXISTS_BY_ID
-    public Boolean existsByUniqueFields(String title, String storeId)
+    public Boolean existsByUniqueFields(String title, Long storeId)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // NULL_VALIDATION

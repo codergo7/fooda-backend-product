@@ -33,12 +33,11 @@ import lombok.experimental.FieldDefaults;
 @Entity(name = "prices")
 @Table
 
-public class PriceEntity implements Serializable, Persistable<UUID>  {
+public class PriceEntity implements Serializable, Persistable<Long>  {
 
     @Id
     @GeneratedValue
-    @Type(type="uuid-char")
-    UUID id;
+    Long id;
 
     @FullTextField
     String title;

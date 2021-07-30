@@ -67,9 +67,11 @@ public class ProductController {
 
         // CREATE_FLOW
         try {
-            UUID savedId = productFlow.createProduct(request);
+            Long savedId = productFlow.createProduct(request);
             // RETURN_SUCCESS
-            return ResponseEntity.status(HttpStatus.CREATED).header("savedId", savedId.toString())
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .header("savedId", String.valueOf(savedId))
                     .body(HttpSuccessMassages.PRODUCT_CREATED.getDescription());
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
@@ -79,12 +81,12 @@ public class ProductController {
 
     // UPDATE_SINGLE_PRODUCT
     @PutMapping(PUT_SINGLE)
-    public ResponseEntity updateProduct(@RequestParam("productId") String id,
+    public ResponseEntity updateProduct(@RequestParam("productId") Long id,
             @RequestBody @Valid UpdateProductRequest request) {
 
         // UPDATE_FLOW
         try {
-            productFlow.updateProduct(UUID.fromString(id), request);
+            productFlow.updateProduct(id, request);
             // RETURN_SUCCESS
             return ResponseEntity.status(HttpStatus.CREATED).body(HttpSuccessMassages.PRODUCT_UPDATED.getDescription());
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
@@ -94,10 +96,10 @@ public class ProductController {
 
     // DELETE_BY_ID
     @DeleteMapping(DELETE_BY_ID)
-    public ResponseEntity deleteById(@RequestParam("productId") String id) {
+    public ResponseEntity deleteById(@RequestParam("productId") Long productId) {
 
         try {
-            productFlow.deleteById(UUID.fromString(id));
+            productFlow.deleteById(productId);
             // RETURN_SUCCESS
             return ResponseEntity.status(HttpStatus.ACCEPTED)
                     .body(HttpSuccessMassages.PRODUCT_DELETED.getDescription());
@@ -109,10 +111,10 @@ public class ProductController {
 
     // DELETE_BY_ID_PERMANENTLY
     @DeleteMapping(DELETE_BY_ID_PERMANENTLY)
-    public ResponseEntity deleteByIdPermanently(@RequestParam("productId") String id) {
+    public ResponseEntity deleteByIdPermanently(@RequestParam("productId") Long productId) {
 
         try {
-            productFlow.deleteByIdPermanently(UUID.fromString(id));
+            productFlow.deleteByIdPermanently(productId);
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
@@ -149,7 +151,7 @@ public class ProductController {
 
     // GET_BY_ID
     @GetMapping(GET_BY_ID)
-    public ResponseEntity findProductById(@RequestParam("productId") String id) {
+    public ResponseEntity findProductById(@RequestParam("productId") Long productId) {
 
         final var response = new Object() {
             public ProductResponse product = null;
@@ -157,7 +159,7 @@ public class ProductController {
 
         // START_SELECT_FLOW
         try {
-            response.product = productFlow.findById(UUID.fromString(id));
+            response.product = productFlow.findById(productId);
             // RETURN_SUCCESS
             return ResponseEntity.status(HttpStatus.FOUND).body(Objects.requireNonNull(response.product));
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
@@ -175,7 +177,7 @@ public class ProductController {
 
     // EXISTS_BY_ID
     @GetMapping(GET_EXISTS_BY_ID)
-    public ResponseEntity existsById(@RequestParam("productId") String id) {
+    public ResponseEntity existsById(@RequestParam("productId") Long productId) {
 
         final var response = new Object() {
             public boolean exists = false;
@@ -183,7 +185,7 @@ public class ProductController {
 
         // START_SELECT_FLOW
         try {
-            response.exists = productFlow.existsById(UUID.fromString(id));
+            response.exists = productFlow.existsById(productId);
         } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
@@ -198,7 +200,7 @@ public class ProductController {
     // EXISTS_BY_UNIQUE_FIELDS
     @GetMapping(GET_EXISTS_BY_UNIQUE_FIELDS)
     public ResponseEntity existsByUniqueFields(@RequestParam("name") String name,
-            @RequestParam("storeId") String storeId) {
+            @RequestParam("storeId") Long storeId) {
 
         final var response = new Object() {
             public boolean exists = false;

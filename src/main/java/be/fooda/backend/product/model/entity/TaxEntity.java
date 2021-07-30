@@ -37,14 +37,13 @@ import lombok.experimental.FieldDefaults;
 // JPA
 @Entity(name = "taxes")
 
-public class TaxEntity implements Serializable, Persistable<UUID> {
+public class TaxEntity implements Serializable, Persistable<Long> {
 
     @Id
     @GeneratedValue
-    @Type(type="uuid-char")
-    UUID id;
+    Long id;
 
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false, unique = true)
     @FullTextField
     String title;
 

@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 
 public class MediaResponse {
 
-    String mediaId;
+    Long mediaId;
 
     String url;
 

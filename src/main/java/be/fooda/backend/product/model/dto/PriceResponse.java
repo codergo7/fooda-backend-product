@@ -19,7 +19,7 @@ import lombok.experimental.FieldDefaults;
 
 public class PriceResponse implements Serializable{
 
-    UUID priceId;
+    Long priceId;
     String title;
     BigDecimal amount;
     LocalDateTime expiresAt;

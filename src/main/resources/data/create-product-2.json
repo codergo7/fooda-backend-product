@@ -1,0 +1,63 @@
+{
+  "categories": [
+    {
+      "title": "pizza"
+    },
+    {
+      "title": "business"
+    }
+  ],
+  "defaultImageId": 2,
+  "description": "The best pizza for business people..",
+  "ingredients": [
+    {
+      "price": 0,
+      "title": "mozzarella"
+    },
+    {
+      "price": 1.25,
+      "title": "spek"
+    },
+    {
+      "price": 0.50,
+      "title": "cheddar"
+    }
+  ],
+  "isFeatured": true,
+  "limitPerOrder": 10,
+  "prices": [
+    {
+      "amount": 25.00,
+      "title": "default price"
+    }
+  ],
+  "storeId": 1,
+  "tags": [
+    {
+      "value": "vegan"
+    },
+    {
+      "value": "brussels"
+    },
+    {
+      "value": "business"
+    },
+    {
+      "value": "pizza"
+    }
+  ],
+  "taxes": [
+    {
+      "isDefault": true,
+      "percentage": 0.21,
+      "title": "Default tax"
+    },
+    {
+      "isDefault": false,
+      "percentage": 0.00,
+      "title": "Tax free"
+    }
+  ],
+  "title": "Pizza Business",
+  "type": "SIMPLE"
+}

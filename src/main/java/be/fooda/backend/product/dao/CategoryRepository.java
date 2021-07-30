@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import be.fooda.backend.product.model.entity.CategoryEntity;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> {
+public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 
 
 

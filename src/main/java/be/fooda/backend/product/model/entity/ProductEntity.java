@@ -44,12 +44,11 @@ import lombok.experimental.FieldDefaults;
 // HIBERNATE SEARCH
 @Indexed
 
-public class ProductEntity implements Serializable, Persistable<UUID> {
+public class ProductEntity implements Serializable, Persistable<Long> {
 
     @Id
     @GeneratedValue
-    @Type(type="uuid-char")
-    UUID id;
+    Long id;
 
     Boolean isActive = Boolean.TRUE;
 
@@ -69,7 +68,7 @@ public class ProductEntity implements Serializable, Persistable<UUID> {
 
     Boolean isFeatured = Boolean.FALSE;
 
-    String storeId;
+    Long storeId;
 
     @FullTextField
     @Enumerated(EnumType.STRING)
@@ -117,7 +116,7 @@ public class ProductEntity implements Serializable, Persistable<UUID> {
         }
     }
 
-    String defaultImageId;
+    Long defaultImageId;
 
     @IndexedEmbedded
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

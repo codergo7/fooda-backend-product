@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 
 public class TagResponse implements Serializable{
 
-    UUID tagId;
+    Long tagId;
     String value;
 
 }

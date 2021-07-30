@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 
 public class StoreResponse {
 
-    String storeId; 
+    Long storeId;
 
     String title;
 

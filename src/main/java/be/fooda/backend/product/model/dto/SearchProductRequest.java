@@ -25,7 +25,7 @@ public class SearchProductRequest implements Serializable{
     String description;
     Integer limitPerOrder;
     Boolean isFeatured;
-    UUID storeId;
+    Long storeId;
     SearchTypeRequest type;
 
     private final Set<SearchPriceRequest> prices = new LinkedHashSet<>();
@@ -48,7 +48,7 @@ public class SearchProductRequest implements Serializable{
         this.taxes.remove(tax);
     }
 
-    String defaultImageId;
+    Long defaultImageId;
 
     private final Set<SearchCategoryRequest> categories = new LinkedHashSet<>();
 

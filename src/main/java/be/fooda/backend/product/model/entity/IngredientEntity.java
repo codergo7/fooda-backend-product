@@ -37,12 +37,11 @@ import lombok.experimental.FieldDefaults;
 // JPA
 @Entity(name = "ingredients")
 
-public class IngredientEntity implements Serializable, Persistable<UUID> {
+public class IngredientEntity implements Serializable, Persistable<Long> {
 
     @Id
     @GeneratedValue
-    @Type(type="uuid-char")
-    UUID id;
+    Long id;
 
     @FullTextField
     String title;

@@ -33,12 +33,11 @@ import lombok.experimental.FieldDefaults;
 // JPA
 @Entity(name = "categories")
 
-public class CategoryEntity implements Serializable, Persistable<UUID> {
+public class CategoryEntity implements Serializable, Persistable<Long> {
 
     @Id
     @GeneratedValue
-    @Type(type="uuid-char")
-    UUID id;
+    Long id;
 
     @FullTextField
     @Column(nullable = false, unique = false)

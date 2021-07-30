@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 
 public class CategoryResponse implements Serializable {
 
-    UUID categoryId;
+    Long categoryId;
     String title;
     Byte[] icon;
 }

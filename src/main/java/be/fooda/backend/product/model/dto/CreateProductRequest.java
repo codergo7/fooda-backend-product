@@ -28,7 +28,7 @@ public class CreateProductRequest implements Serializable{
 
     Boolean isFeatured = Boolean.FALSE;
 
-    String storeId;
+    Long storeId;
 
     CreateTypeRequest type;
 
@@ -52,7 +52,7 @@ public class CreateProductRequest implements Serializable{
         this.taxes.remove(tax);
     }
 
-    String defaultImageId;
+    Long defaultImageId;
 
     private final Set<CreateCategoryRequest> categories = new LinkedHashSet<>();
 

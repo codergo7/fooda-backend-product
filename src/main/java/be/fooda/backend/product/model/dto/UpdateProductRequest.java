@@ -26,7 +26,7 @@ public class UpdateProductRequest implements Serializable {
     String description;
     Integer limitPerOrder;
     Boolean isFeatured;
-    String storeId;
+    Long storeId;
     UpdateTypeRequest type;
 
     private final Set<UpdatePriceRequest> prices = new LinkedHashSet<>();
@@ -49,7 +49,7 @@ public class UpdateProductRequest implements Serializable {
         this.taxes.remove(tax);
     }
 
-    String defaultImageId;
+    Long defaultImageId;
 
     private final Set<UpdateCategoryRequest> categories = new LinkedHashSet<>();
 

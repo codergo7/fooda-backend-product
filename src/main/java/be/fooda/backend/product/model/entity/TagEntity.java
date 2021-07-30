@@ -36,12 +36,11 @@ import lombok.experimental.FieldDefaults;
 // JPA
 @Entity(name = "tags")
 
-public class TagEntity implements Serializable, Persistable<UUID> {
+public class TagEntity implements Serializable, Persistable<Long> {
 
     @Id
     @GeneratedValue
-    @Type(type="uuid-char")
-    UUID id;
+    Long id;
 
     @FullTextField
     @Column(nullable = false, unique = false)
