@@ -17,7 +17,7 @@ spring:
       repositories:
         enabled: true
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/productdb?useSSL=false
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/productdb?allowPublicKeyRetrieval=true&useSSL=false
     username: ${MYSQL_HOST_USERNAME:fooda}
     password: ${MYSQL_HOST_PASSWORD:fooda}
     driver-class-name: com.mysql.cj.jdbc.Driver
