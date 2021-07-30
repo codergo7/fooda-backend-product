@@ -36,9 +36,8 @@ import lombok.experimental.FieldDefaults;
 public class PriceEntity implements Serializable, Persistable<UUID>  {
 
     @Id
-    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
-    @GeneratedValue(generator = "UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue
+    @Type(type="uuid-char")
     UUID id;
 
     @FullTextField

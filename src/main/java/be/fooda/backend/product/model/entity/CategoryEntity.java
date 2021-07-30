@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.springframework.data.domain.Persistable;
 
@@ -35,9 +36,8 @@ import lombok.experimental.FieldDefaults;
 public class CategoryEntity implements Serializable, Persistable<UUID> {
 
     @Id
-    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
-    @GeneratedValue(generator = "UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue
+    @Type(type="uuid-char")
     UUID id;
 
     @FullTextField
