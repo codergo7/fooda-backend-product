@@ -4,7 +4,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     database-platform: org.hibernate.dialect.MySQL5Dialect
     properties:
       hibernate:
@@ -17,7 +17,7 @@ spring:
       repositories:
         enabled: true
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/productdb?createDatabaseIfNotExist=true&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/productdb?useSSL=false
     username: ${MYSQL_HOST_USERNAME:fooda}
     password: ${MYSQL_HOST_PASSWORD:fooda}
     driver-class-name: com.mysql.cj.jdbc.Driver

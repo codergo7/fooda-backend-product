@@ -1,14 +1,12 @@
 package be.fooda.backend.product.model.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -16,6 +14,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.springframework.data.domain.Persistable;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -31,12 +30,14 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode(of = { "id" })
 
 // JPA
-@Entity
+@Entity(name = "categories")
 
-public class CategoryEntity implements Serializable {
+public class CategoryEntity implements Serializable, Persistable<UUID> {
 
     @Id
-    @GeneratedValue
+    @GenericGenerator(name = "UUIDGenerator", strategy = "uuid2")
+    @GeneratedValue(generator = "UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
     UUID id;
 
     @FullTextField
@@ -47,7 +48,13 @@ public class CategoryEntity implements Serializable {
     Byte[] icon;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id")
+    @ManyToOne
     ProductEntity product;
+
+    @Override
+    public boolean isNew() {
+        return Objects.isNull(id);
+    }
 
 }
