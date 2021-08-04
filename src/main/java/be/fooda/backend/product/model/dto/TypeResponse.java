@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+
+
 public enum TypeResponse {
 
     SIMPLE("A product which have no variations"),

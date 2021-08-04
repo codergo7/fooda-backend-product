@@ -1,23 +1,24 @@
 package be.fooda.backend.product.model.dto;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Delegate;
 import lombok.experimental.FieldDefaults;
+
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 // LOMBOK
 @Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = { "title", "storeId" })
+
+// JACKSON
+@JsonIgnoreProperties(ignoreUnknown = true)
 
 public class UpdateProductRequest implements Serializable {
 

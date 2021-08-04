@@ -1,28 +1,13 @@
 package be.fooda.backend.product.model.entity;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.springframework.data.domain.Persistable;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.FieldDefaults;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 // LOMBOK
 @Data
@@ -40,7 +25,7 @@ public class CategoryEntity implements Serializable, Persistable<Long> {
     Long id;
 
     @FullTextField
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false)
     String title;
 
     @Lob
