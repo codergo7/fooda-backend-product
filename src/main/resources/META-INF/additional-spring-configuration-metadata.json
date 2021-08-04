@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "fooda.backend.store.url",
+      "type": "java.lang.String",
+      "description": "Description for fooda.backend.store.url."
+    },
+    {
+      "name": "fooda.backend.media.url",
+      "type": "java.lang.String",
+      "description": "Description for fooda.backend.media.url."
+    }
+  ]
+}

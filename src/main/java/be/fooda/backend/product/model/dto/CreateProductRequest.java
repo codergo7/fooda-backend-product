@@ -1,15 +1,15 @@
 package be.fooda.backend.product.model.dto;
 
-import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 // LOMBOK
 @Data

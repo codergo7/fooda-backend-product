@@ -1,21 +1,5 @@
 package be.fooda.backend.product.service.flow;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.transaction.Transactional;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import be.fooda.backend.product.dao.ProductIndexer;
 import be.fooda.backend.product.dao.ProductRepository;
 import be.fooda.backend.product.model.dto.CreateProductRequest;
@@ -25,12 +9,25 @@ import be.fooda.backend.product.model.entity.ProductEntity;
 import be.fooda.backend.product.model.http.HttpFailureMassages;
 import be.fooda.backend.product.service.exception.ResourceNotFoundException;
 import be.fooda.backend.product.service.mapper.ProductMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 // LOMBOK
 @Slf4j
@@ -39,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 
 // SPRING
 @Service
+
 public class ProductFlow {
 
     ProductRepository productRepository;
@@ -64,16 +62,16 @@ public class ProductFlow {
             throw new NullPointerException(HttpFailureMassages.PRODUCT_IS_REQUIRED.getDescription());
         }
 
-        // IF(PRODUCT_EXISTS)
-        boolean exists = productRepository.existsByTitleAndStoreId(request.getTitle(), request.getStoreId());
+        final var exists = productRepository.existsByTitleAndStoreId(request.getTitle(), request.getStoreId());
 
+        // IF(PRODUCT_EXISTS)
         if (exists) {
             // THROW_EXCEPTION
             throw new ResourceNotFoundException(HttpFailureMassages.PRODUCT_ALREADY_EXIST.getDescription());
         }
 
         // MAP_DTO_TO_ENTITY
-        ProductEntity entity = productMapper.toEntity(request);
+        final var entity = productMapper.toEntity(request);
 
         // SAVE_TO_DB(ENTITY)
         final var savedEntity = productRepository.save(entity);
@@ -89,7 +87,7 @@ public class ProductFlow {
 
     // UPDATE_PRODUCT(UNIQUE_IDENTIFIER, REQUEST)
     @Transactional
-    public void updateProduct(Long id, UpdateProductRequest request)
+    public Long updateProduct(Long id, UpdateProductRequest request)
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // IF(NULL)
@@ -98,7 +96,7 @@ public class ProductFlow {
             throw new NullPointerException(HttpFailureMassages.FAILED_TO_UPDATE_PRODUCT.getDescription());
         }
 
-        Optional<ProductEntity> oEntity = productRepository.findById(id);
+        final var oEntity = productRepository.findById(id);
 
         // IF(PRODUCT_NOT_EXIST)
         if (oEntity.isEmpty()) {
@@ -107,8 +105,8 @@ public class ProductFlow {
         }
 
         // MAP_FROM_REQUEST_TO_ENTITY
-        ProductEntity entity = oEntity.get();
-        ProductEntity entityToUpdate = productMapper.toEntity(request, entity);
+        final var entity = oEntity.get();
+        final var entityToUpdate = productMapper.toEntity(request, entity);
 
         // UPDATE_FROM_DB
         final var updatedEntity = productRepository.save(entityToUpdate);
@@ -117,6 +115,8 @@ public class ProductFlow {
         final var response = productMapper.toResponse(updatedEntity);
         log.info("UPDATE A SINGLE PRODUCT BY ID: " + "\n\n" + jsonMapper.writeValueAsString(response) + "\n\n");
 
+        // RETURN_UPDATED_ID
+        return updatedEntity.getId();
     }
 
     // FIND_ALL(PAGE_NO, PAGE_SIZE)
@@ -125,15 +125,16 @@ public class ProductFlow {
             throws NullPointerException, ResourceNotFoundException, JsonProcessingException {
 
         // READ_FROM_DB(PAGE_NO, PAGE_SIZE)
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-        Page<ProductEntity> pages = productRepository.findAll(pageable);
+        final var pageable = PageRequest.of(pageNo - 1, pageSize);
+        final var pages = productRepository.findAll(pageable);
 
+        // MAP_FROM_ENTITIES_TO_RESPONSES
         final var responses = productMapper.toResponses(pages.toList());
 
         // LOG
         log.info("FIND ALL PRODUCTS: " + "\n\n" + jsonMapper.writeValueAsString(responses) + "\n\n");
 
-        // MAP & RETURN
+        // RETURN_LIST
         return responses;
     }
 
@@ -263,7 +264,7 @@ public class ProductFlow {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
     @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-    class Exists {
+    static class Exists implements Serializable {
         Map<String, Object> params;
         boolean result;
     }
