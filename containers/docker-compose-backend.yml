@@ -1,8 +1,10 @@
-version: "3.1"
+# docker-compose.yml for REST API
+
+version: '3.9'
 
 services:
 
-  product-api:
+  backend:
     image: yilmazchef/fooda-backend-product:latest
     links:
       - db_server:db_server
@@ -10,3 +12,5 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db_server:3306/productdb?createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSOWRD: fooda
+    ports:
+      - 8081:8080

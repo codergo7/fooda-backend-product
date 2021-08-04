@@ -6,8 +6,8 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_DATABASE: database
-      MYSQL_ROOT_PASSWORD: testy
+      MYSQL_DATABASE: productdb
+      MYSQL_ROOT_PASSWORD: fooda
     ports:
       - 3306:3306
 
