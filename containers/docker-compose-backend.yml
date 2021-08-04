@@ -1,0 +1,12 @@
+version: "3.1"
+
+services:
+
+  product-api:
+    image: yilmazchef/fooda-backend-product:latest
+    links:
+      - db_server:db_server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db_server:3306/productdb?createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSOWRD: fooda

@@ -1,0 +1,21 @@
+version: "3.1"
+
+services:
+
+  db_server:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: database
+      MYSQL_ROOT_PASSWORD: testy
+    ports:
+      - 3306:3306
+
+  db_admin:
+    image: adminer:4.8.1-standalone
+    restart: always
+    depends_on:
+      - db_server
+    ports:
+      - 9000:8080
+

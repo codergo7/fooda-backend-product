@@ -5,7 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    database-platform: org.hibernate.dialect.MySQL5Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
         search:
@@ -17,9 +17,9 @@ spring:
       repositories:
         enabled: true
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/productdb?allowPublicKeyRetrieval=true&useSSL=false
-    username: ${MYSQL_HOST_USERNAME:fooda}
-    password: ${MYSQL_HOST_PASSWORD:fooda}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:fooda}
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialization-mode: always
   security:
