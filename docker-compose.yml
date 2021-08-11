@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: productdb
       MYSQL_ROOT_PASSWORD: fooda
     ports:
-      - 3306:3306
+      - 3307:3306
 
   db_admin:
     image: adminer:4.8.1-standalone
@@ -21,6 +21,9 @@ services:
 
   backend:
     image: yilmazchef/fooda-backend-product:latest
+    depends_on:
+      - db_server
+      - db_admin
     links:
       - db_server:db_server
     environment:
