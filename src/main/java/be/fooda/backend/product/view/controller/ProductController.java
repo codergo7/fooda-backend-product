@@ -37,9 +37,9 @@ public class ProductController {
     ProductMapper productMapper;
     ProductIndexer productIndexer;
 
-    // CREATING_NEW_PRODUCT
+    // CREATE_NEW_PRODUCT
     @Transactional
-    @PostMapping(HttpEndpoints.POST_SINGLE)
+    @PostMapping(HttpEndpoints.PRODUCTS_POST_SINGLE_TEXT)
     public ResponseEntity<String> create(@RequestBody @Valid @NotNull CreateProductRequest request) {
 
         // FLOW_AND_RETURN
@@ -57,12 +57,12 @@ public class ProductController {
 
     // UPDATE_SINGLE_PRODUCT
     @Transactional
-    @PutMapping(HttpEndpoints.PUT_SINGLE + "{id}")
-    public ResponseEntity<String> updateById(@PathVariable("id") Long id, @RequestBody @Valid @NotNull UpdateProductRequest request) {
+    @PutMapping(HttpEndpoints.PRODUCTS_PUT_SINGLE_TEXT)
+    public ResponseEntity<String> updateById(@PathVariable("productId") Long productId, @RequestBody @Valid @NotNull UpdateProductRequest request) {
 
         // FLOW_AND_RETURN
         return productRepository
-                .findById(id)
+                .findById(productId)
                 .map(entity -> productMapper.toEntity(request, entity))
                 .map(entity -> productRepository.save(entity))
                 .map(entity -> ResponseEntity
@@ -76,11 +76,11 @@ public class ProductController {
 
     // DELETE_BY_ID
     @Transactional
-    @DeleteMapping(HttpEndpoints.DELETE_BY_ID + "{id}")
-    public ResponseEntity<String> deleteById(@PathVariable("id") @NotNull Long id) {
+    @DeleteMapping(HttpEndpoints.PRODUCTS_DELETE_BY_ID)
+    public ResponseEntity<String> deleteById(@PathVariable("productId") @NotNull Long productId) {
 
         return productRepository
-                .findById(id)
+                .findById(productId)
                 .map(entity -> productRepository.makePassive(entity.getId()))
                 .map(deleteCount -> deleteCount > 0
                         ? ResponseEntity
@@ -97,13 +97,13 @@ public class ProductController {
 
     // DELETE_BY_ID_PERMANENTLY
     @Transactional
-    @DeleteMapping(HttpEndpoints.DELETE_BY_ID_PERMANENTLY + "{id}")
-    public ResponseEntity<String> deleteByIdPermanently(@PathVariable("id") @NotNull Long id) {
+    @DeleteMapping(HttpEndpoints.PRODUCTS_DELETE_BY_ID_PERMANENTLY)
+    public ResponseEntity<String> deleteByIdPermanently(@PathVariable("productId") @NotNull Long productId) {
 
         return productRepository
-                .findById(id)
+                .findById(productId)
                 .map(entity -> {
-                    productRepository.deleteById(id);
+                    productRepository.deleteById(productId);
                     return ResponseEntity
                             .status(HttpStatus.ACCEPTED)
                             .body(HttpSuccessMassages.PRODUCT_DELETED.getDescription());
@@ -117,11 +117,11 @@ public class ProductController {
 
     // GET_ALL
     @Transactional
-    @GetMapping(HttpEndpoints.GET_ALL)
+    @GetMapping(HttpEndpoints.PRODUCTS_FIND_ALL_TEXT)
     public ResponseEntity<List<ProductResponse>> findAll(
-            @RequestParam(value = HttpEndpoints.PAGE_NUMBER,
+            @RequestParam(value = HttpEndpoints.PAGE_NUMBER_TEXT,
                     required = false, defaultValue = HttpEndpoints.PAGE_NUMBER_DEFAULT_VALUE) Integer pageNo,
-            @RequestParam(value = HttpEndpoints.PAGE_SIZE,
+            @RequestParam(value = HttpEndpoints.PAGE_SIZE_TEXT,
                     required = false, defaultValue = HttpEndpoints.PAGE_SIZE_DEFAULT_VALUE) Integer pageSize) {
 
         return ResponseEntity
@@ -137,11 +137,11 @@ public class ProductController {
 
     // GET_BY_ID
     @Transactional
-    @GetMapping(HttpEndpoints.GET_BY_ID + "{id}")
-    public ResponseEntity<ProductResponse> findById(@PathVariable("id") @NotNull Long id) {
+    @GetMapping(HttpEndpoints.PRODUCTS_FIND_BY_ID_TEXT)
+    public ResponseEntity<ProductResponse> findById(@PathVariable("productId") @NotNull Long productId) {
 
         return productRepository
-                .findById(id)
+                .findById(productId)
                 .map(entity -> productMapper.toResponse(entity))
                 .map(response -> ResponseEntity.status(HttpStatus.FOUND).body(response))
                 .orElseThrow(() -> {
@@ -151,14 +151,14 @@ public class ProductController {
 
     // SEARCH(KEYWORDS)
     @Transactional
-    @GetMapping(HttpEndpoints.GET_SEARCH + "{keyword}")
+    @GetMapping(HttpEndpoints.PRODUCTS_SEARCH_TEXT)
     public ResponseEntity<List<ProductResponse>> search(
             @PathVariable("keyword") @NotNull String keyword,
             @RequestParam(
-                    value = HttpEndpoints.PAGE_NUMBER,
+                    value = HttpEndpoints.PAGE_NUMBER_TEXT,
                     required = false, defaultValue = HttpEndpoints.PAGE_NUMBER_DEFAULT_VALUE) Integer pageNo,
             @RequestParam(
-                    value = HttpEndpoints.PAGE_SIZE,
+                    value = HttpEndpoints.PAGE_SIZE_TEXT,
                     required = false, defaultValue = HttpEndpoints.PAGE_SIZE_DEFAULT_VALUE) Integer pageSize) {
 
         // FLOW_AND_RETURN
@@ -175,26 +175,22 @@ public class ProductController {
 
     // EXISTS_BY_ID
     @Transactional
-    @GetMapping(HttpEndpoints.GET_EXISTS_BY_ID + "{id}")
-    public ResponseEntity<String> existsById(@PathVariable("id") @NotNull Long id) {
+    @GetMapping(HttpEndpoints.PRODUCTS_FIND_EXISTS_BY_ID_TEXT)
+    public ResponseEntity<String> existsById(@PathVariable("productId") @NotNull Long productId) {
 
-        return productRepository.existsById(id)
+        return productRepository.existsById(productId)
                 ? ResponseEntity.status(HttpStatus.FOUND).body(HttpSuccessMassages.PRODUCT_EXISTS.getDescription())
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body(HttpFailureMassages.PRODUCT_DOES_NOT_EXIST.getDescription());
     }
 
     // EXISTS_BY_UNIQUE_FIELDS
     @Transactional
-    @GetMapping(HttpEndpoints.GET_EXISTS_BY_UNIQUE_FIELDS)
+    @GetMapping(HttpEndpoints.PRODUCT_EXISTS_BY_UNIQUE_FIELDS)
     public ResponseEntity<String> existsByUniqueFields(@RequestBody ExistsByUniqueFieldsRequest request) {
 
-        final var exists = productRepository.existsByTitleAndStoreId(request.getTitle(), request.getStoreId());
-
-        final var body = (exists == Boolean.TRUE) ? HttpSuccessMassages.PRODUCT_EXISTS.getDescription()
-                : HttpFailureMassages.PRODUCT_DOES_NOT_EXIST.getDescription();
-
-        // RETURN_SUCCESS
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
+        return productRepository.existsByTitleAndStoreId(request.getTitle(), request.getStoreId())
+                ? ResponseEntity.status(HttpStatus.FOUND).body(HttpSuccessMassages.PRODUCT_EXISTS.getDescription())
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(HttpFailureMassages.PRODUCT_DOES_NOT_EXIST.getDescription());
     }
 
 

@@ -2,16 +2,14 @@ package be.fooda.backend.product.view.controller;
 
 import be.fooda.backend.product.dao.PriceRepository;
 import be.fooda.backend.product.model.dto.PriceResponse;
+import be.fooda.backend.product.model.http.HttpEndpoints;
 import be.fooda.backend.product.model.http.HttpFailureMassages;
 import be.fooda.backend.product.service.mapper.PriceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
@@ -29,8 +27,8 @@ public class PriceController {
     PriceRepository priceRepository;
     PriceMapper priceMapper;
 
-    @GetMapping("/find/one")
-    public ResponseEntity<PriceResponse> findById(@RequestParam("priceId") Long priceId) {
+    @GetMapping(HttpEndpoints.PRICES_FIND_BY_ID_TEXT)
+    public ResponseEntity<PriceResponse> findById(@PathVariable Long productId, @PathVariable Long priceId) {
 
         // FLOW_AND_RETURN
         return priceRepository
@@ -42,11 +40,11 @@ public class PriceController {
                 });
     }
 
-    @GetMapping("/find/all")
+    @GetMapping(HttpEndpoints.PRICES_FIND_ALL_BY_PRODUCT_ID_TEXT)
     public ResponseEntity<List<PriceResponse>> findAllByProductId(
-            @RequestParam(value = "pageNo", defaultValue = "1", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "25", required = false) int pageSize,
-            @RequestParam("productId") Long productId) {
+            @RequestParam(defaultValue = "1", required = false) int pageNo,
+            @RequestParam(defaultValue = "25", required = false) int pageSize,
+            @RequestParam Long productId) {
 
         return ResponseEntity
                 .status(HttpStatus.FOUND)
@@ -58,8 +56,8 @@ public class PriceController {
                 );
     }
 
-    @GetMapping("/find/default")
-    public ResponseEntity<PriceResponse> getDefaultPriceByProductId(@RequestParam("priceId") @NotNull Long productId) {
+    @GetMapping(HttpEndpoints.PRICES_FIND_BY_ID_TEXT)
+    public ResponseEntity<PriceResponse> findDefaultPriceByProductId(@RequestParam("productId") @NotNull Long productId) {
 
         // FLOW_WITH_RETURN
         return priceRepository
