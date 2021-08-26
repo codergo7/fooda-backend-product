@@ -9,6 +9,7 @@ public enum HttpSuccessMassages {
     PRODUCT_CREATED("Product is created based on the given information"),
     PRODUCT_UPDATED("Product successfully updated"),
     PRODUCT_DELETED("Product deleted based on the new information"),
+    PRODUCT_MADE_PASSIVE("Product is made passive."),
     PRODUCT_LIST_CREATED("All Products from the list are created.. "),
     PRODUCT_CATEGORY_ADDED("Category is added to the product"),
     PRODUCT_EXISTS("Product already exists."),

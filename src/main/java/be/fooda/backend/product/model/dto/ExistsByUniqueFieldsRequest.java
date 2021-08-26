@@ -7,25 +7,19 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 // LOMBOK
 @Data
 @NoArgsConstructor(force = true, access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = { "priceId" })
+@EqualsAndHashCode(of = {"title", "storeId"})
 
 // JACKSON
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-public class PriceResponse implements Serializable{
+public class ExistsByUniqueFieldsRequest {
 
-    Long priceId;
-    String title;
-    BigDecimal amount;
-    LocalDateTime expiresAt;
-    Boolean isDefault;
-    String currency; // EURO, €, EUR -> EUR
+    private String title;
+
+    private Long storeId;
+
 }

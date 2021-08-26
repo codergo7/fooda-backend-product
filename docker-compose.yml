@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: productdb
       MYSQL_ROOT_PASSWORD: fooda
     ports:
-      - 3307:3306
+      - 3421:3306
 
   db_admin:
     image: adminer:4.8.1-standalone
@@ -17,7 +17,7 @@ services:
     depends_on:
       - db_server
     ports:
-      - 9000:8080
+      - 9121:8080
 
   backend:
     image: yilmazchef/fooda-backend-product:latest
@@ -31,4 +31,4 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSOWRD: fooda
     ports:
-      - 8081:8080
+      - 8121:8080

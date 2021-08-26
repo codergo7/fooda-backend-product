@@ -1,223 +1,201 @@
 package be.fooda.backend.product.view.controller;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.validation.Valid;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import be.fooda.backend.product.dao.ProductIndexer;
+import be.fooda.backend.product.dao.ProductRepository;
 import be.fooda.backend.product.model.dto.CreateProductRequest;
+import be.fooda.backend.product.model.dto.ExistsByUniqueFieldsRequest;
 import be.fooda.backend.product.model.dto.ProductResponse;
 import be.fooda.backend.product.model.dto.UpdateProductRequest;
+import be.fooda.backend.product.model.http.HttpEndpoints;
 import be.fooda.backend.product.model.http.HttpFailureMassages;
 import be.fooda.backend.product.model.http.HttpSuccessMassages;
-import be.fooda.backend.product.service.exception.ResourceNotFoundException;
-import be.fooda.backend.product.service.flow.ProductFlow;
+import be.fooda.backend.product.service.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
+
+// LOMBOK
 @RequiredArgsConstructor
+
+// SPRING
 @RestController
 @RequestMapping("/api/v1/products") // https://www.fooda.be/api/v1/products
+
 public class ProductController {
 
-    private static final int PAGE_SIZE_PER_RESULT = 25;
-    private static final int DEFAULT_PAGE_NO = 0;
-
-    private static final String PAGE_NUMBER = "pageNo";
-    private static final Integer PAGE_NUMBER_DEFAULT_VALUE = 1;
-    private static final String PAGE_SIZE = "pageSize";
-    private static final Integer PAGE_SIZE_DEFAULT_VALUE = 50;
-
-    private static final String GET_ALL = "get/all";
-    private static final String GET_SEARCH = "search";
-    private static final String GET_FILTER = "filter";
-    private static final String POST_SINGLE = "add/one";
-    private static final String POST_ALL = "add/all";
-    private static final String GET_BY_ID = "get/one";
-    private static final String GET_EXISTS_BY_ID = "exists/one";
-    private static final String GET_EXISTS_BY_UNIQUE_FIELDS = "exists/unique";
-    private static final String PUT_SINGLE = "edit/one";
-    private static final String PUT_ALL = "edit/all";
-    private static final String DELETE_BY_ID = "delete/one";
-    private static final String DELETE_BY_ID_PERMANENTLY = "delete/one/permanent";
-
     // INJECT_FLOW_BEAN
-    private final ProductFlow productFlow;
-
-    // RESPONSE_ENTITY = STATUS, HEADERS, BODY
+    ProductRepository productRepository;
+    ProductMapper productMapper;
+    ProductIndexer productIndexer;
 
     // CREATING_NEW_PRODUCT
-    @PostMapping(POST_SINGLE)
-    public ResponseEntity<String> createProduct(@RequestBody @Valid CreateProductRequest request) {
+    @Transactional
+    @PostMapping(HttpEndpoints.POST_SINGLE)
+    public ResponseEntity<String> create(@RequestBody @Valid @NotNull CreateProductRequest request) {
 
-        // CREATE_FLOW
-        try {
-            Long savedId = productFlow.createProduct(request);
-            // RETURN_SUCCESS
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .header("savedId", String.valueOf(savedId))
-                    .body(HttpSuccessMassages.PRODUCT_CREATED.getDescription());
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
-
+        // FLOW_AND_RETURN
+        return productRepository
+                .findByTitleAndStoreId(request.getTitle(), request.getStoreId())
+                .map(entity -> productRepository.save(entity))
+                .map(entity -> ResponseEntity
+                        .status(HttpStatus.ACCEPTED)
+                        .header("saved_id", String.valueOf(entity.getId()))
+                        .body(HttpSuccessMassages.PRODUCT_UPDATED.getDescription()))
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, HttpFailureMassages.PRODUCT_ALREADY_EXIST.getDescription());
+                });
     }
 
     // UPDATE_SINGLE_PRODUCT
-    @PutMapping(PUT_SINGLE)
-    public ResponseEntity updateProduct(@RequestParam("productId") Long id,
-            @RequestBody @Valid UpdateProductRequest request) {
+    @Transactional
+    @PutMapping(HttpEndpoints.PUT_SINGLE + "{id}")
+    public ResponseEntity<String> updateById(@PathVariable("id") Long id, @RequestBody @Valid @NotNull UpdateProductRequest request) {
 
-        // UPDATE_FLOW
-        try {
-            productFlow.updateProduct(id, request);
-            // RETURN_SUCCESS
-            return ResponseEntity.status(HttpStatus.CREATED).body(HttpSuccessMassages.PRODUCT_UPDATED.getDescription());
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
+        // FLOW_AND_RETURN
+        return productRepository
+                .findById(id)
+                .map(entity -> productMapper.toEntity(request, entity))
+                .map(entity -> productRepository.save(entity))
+                .map(entity -> ResponseEntity
+                        .status(HttpStatus.ACCEPTED)
+                        .header("updated_id", String.valueOf(entity.getId()))
+                        .body(HttpSuccessMassages.PRODUCT_UPDATED.getDescription()))
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, HttpFailureMassages.PRODUCT_NOT_FOUND.getDescription());
+                });
     }
 
     // DELETE_BY_ID
-    @DeleteMapping(DELETE_BY_ID)
-    public ResponseEntity deleteById(@RequestParam("productId") Long productId) {
+    @Transactional
+    @DeleteMapping(HttpEndpoints.DELETE_BY_ID + "{id}")
+    public ResponseEntity<String> deleteById(@PathVariable("id") @NotNull Long id) {
 
-        try {
-            productFlow.deleteById(productId);
-            // RETURN_SUCCESS
-            return ResponseEntity.status(HttpStatus.ACCEPTED)
-                    .body(HttpSuccessMassages.PRODUCT_DELETED.getDescription());
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
-
+        return productRepository
+                .findById(id)
+                .map(entity -> productRepository.makePassive(entity.getId()))
+                .map(deleteCount -> deleteCount > 0
+                        ? ResponseEntity
+                        .status(HttpStatus.ACCEPTED)
+                        .body(HttpSuccessMassages.PRODUCT_MADE_PASSIVE.getDescription())
+                        : ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(HttpFailureMassages.FAILED_TO_MAKE_PRODUCT_PASSIVE.getDescription())
+                )
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, HttpFailureMassages.FAILED_TO_MAKE_PRODUCT_PASSIVE.getDescription());
+                });
     }
 
     // DELETE_BY_ID_PERMANENTLY
-    @DeleteMapping(DELETE_BY_ID_PERMANENTLY)
-    public ResponseEntity deleteByIdPermanently(@RequestParam("productId") Long productId) {
+    @Transactional
+    @DeleteMapping(HttpEndpoints.DELETE_BY_ID_PERMANENTLY + "{id}")
+    public ResponseEntity<String> deleteByIdPermanently(@PathVariable("id") @NotNull Long id) {
 
-        try {
-            productFlow.deleteByIdPermanently(productId);
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
-
-        // RETURN_SUCCESS
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(HttpSuccessMassages.PRODUCT_DELETED.getDescription());
+        return productRepository
+                .findById(id)
+                .map(entity -> {
+                    productRepository.deleteById(id);
+                    return ResponseEntity
+                            .status(HttpStatus.ACCEPTED)
+                            .body(HttpSuccessMassages.PRODUCT_DELETED.getDescription());
+                })
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, HttpFailureMassages.PRODUCT_NOT_FOUND.getDescription());
+                });
     }
 
     // @PatchMapping // UPDATE PRODUCT(S) BUT NOT ALL THE FIELDS
 
     // GET_ALL
-    @GetMapping(GET_ALL)
-    public ResponseEntity findAllProducts(@RequestParam(value = PAGE_NUMBER, required = false) Integer pageNo,
-            @RequestParam(value = PAGE_SIZE, required = false) Integer pageSize) {
+    @Transactional
+    @GetMapping(HttpEndpoints.GET_ALL)
+    public ResponseEntity<List<ProductResponse>> findAll(
+            @RequestParam(value = HttpEndpoints.PAGE_NUMBER,
+                    required = false, defaultValue = HttpEndpoints.PAGE_NUMBER_DEFAULT_VALUE) Integer pageNo,
+            @RequestParam(value = HttpEndpoints.PAGE_SIZE,
+                    required = false, defaultValue = HttpEndpoints.PAGE_SIZE_DEFAULT_VALUE) Integer pageSize) {
 
-        // SET DEFAULT VALUES IF EMPTY..
-        if (Objects.isNull(pageNo)) {
-            pageNo = PAGE_NUMBER_DEFAULT_VALUE;
-        }
-
-        if (Objects.isNull(pageSize)) {
-            pageSize = PAGE_SIZE_DEFAULT_VALUE;
-        }
-
-        // START_SELECT_FLOW
-        try {
-            // RETURN_ALL_PRODUCTS_IN_PAGES
-            final var responses = productFlow.findAll(pageNo, pageSize);
-            return ResponseEntity.status(HttpStatus.FOUND).body(responses);
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .body(
+                        productRepository
+                                .findAllByIsActive(true, PageRequest.of(pageNo - 1, pageSize))
+                                .stream()
+                                .map(entity -> productMapper.toResponse(entity))
+                                .collect(Collectors.toUnmodifiableList())
+                );
     }
 
     // GET_BY_ID
-    @GetMapping(GET_BY_ID)
-    public ResponseEntity findProductById(@RequestParam("productId") Long productId) {
+    @Transactional
+    @GetMapping(HttpEndpoints.GET_BY_ID + "{id}")
+    public ResponseEntity<ProductResponse> findById(@PathVariable("id") @NotNull Long id) {
 
-        final var response = new Object() {
-            public ProductResponse product = null;
-        };
-
-        // START_SELECT_FLOW
-        try {
-            response.product = productFlow.findById(productId);
-            // RETURN_SUCCESS
-            return ResponseEntity.status(HttpStatus.FOUND).body(Objects.requireNonNull(response.product));
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-        }
+        return productRepository
+                .findById(id)
+                .map(entity -> productMapper.toResponse(entity))
+                .map(response -> ResponseEntity.status(HttpStatus.FOUND).body(response))
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, HttpFailureMassages.PRODUCT_NOT_FOUND.getDescription());
+                });
     }
 
     // SEARCH(KEYWORDS)
-    @GetMapping(GET_SEARCH)
-    public ResponseEntity search(@RequestParam Map<String, String> keywords) {
+    @Transactional
+    @GetMapping(HttpEndpoints.GET_SEARCH + "{keyword}")
+    public ResponseEntity<List<ProductResponse>> search(
+            @PathVariable("keyword") @NotNull String keyword,
+            @RequestParam(
+                    value = HttpEndpoints.PAGE_NUMBER,
+                    required = false, defaultValue = HttpEndpoints.PAGE_NUMBER_DEFAULT_VALUE) Integer pageNo,
+            @RequestParam(
+                    value = HttpEndpoints.PAGE_SIZE,
+                    required = false, defaultValue = HttpEndpoints.PAGE_SIZE_DEFAULT_VALUE) Integer pageSize) {
 
-        // RETURN_SUCCESS
-        return ResponseEntity.status(HttpStatus.FOUND).body(Collections.EMPTY_LIST);
+        // FLOW_AND_RETURN
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .body(
+                        productIndexer
+                                .search(PageRequest.of(pageNo - 1, pageSize), keyword)
+                                .stream()
+                                .map(entity -> productMapper.toResponse(entity))
+                                .collect(Collectors.toUnmodifiableList())
+                );
     }
 
     // EXISTS_BY_ID
-    @GetMapping(GET_EXISTS_BY_ID)
-    public ResponseEntity existsById(@RequestParam("productId") Long productId) {
+    @Transactional
+    @GetMapping(HttpEndpoints.GET_EXISTS_BY_ID + "{id}")
+    public ResponseEntity<String> existsById(@PathVariable("id") @NotNull Long id) {
 
-        final var response = new Object() {
-            public boolean exists = false;
-        };
-
-        // START_SELECT_FLOW
-        try {
-            response.exists = productFlow.existsById(productId);
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
-
-        final var body = (response.exists == Boolean.TRUE) ? HttpSuccessMassages.PRODUCT_EXISTS.getDescription()
-                : HttpFailureMassages.PRODUCT_DOES_NOT_EXIST.getDescription();
-
-        // RETURN_SUCCESS
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
+        return productRepository.existsById(id)
+                ? ResponseEntity.status(HttpStatus.FOUND).body(HttpSuccessMassages.PRODUCT_EXISTS.getDescription())
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(HttpFailureMassages.PRODUCT_DOES_NOT_EXIST.getDescription());
     }
 
     // EXISTS_BY_UNIQUE_FIELDS
-    @GetMapping(GET_EXISTS_BY_UNIQUE_FIELDS)
-    public ResponseEntity existsByUniqueFields(@RequestParam("name") String name,
-            @RequestParam("storeId") Long storeId) {
+    @Transactional
+    @GetMapping(HttpEndpoints.GET_EXISTS_BY_UNIQUE_FIELDS)
+    public ResponseEntity<String> existsByUniqueFields(@RequestBody ExistsByUniqueFieldsRequest request) {
 
-        final var response = new Object() {
-            public boolean exists = false;
-        };
+        final var exists = productRepository.existsByTitleAndStoreId(request.getTitle(), request.getStoreId());
 
-        // START_SELECT_FLOW
-        try {
-            response.exists = productFlow.existsByUniqueFields(name, storeId);
-        } catch (NullPointerException | ResourceNotFoundException | JsonProcessingException exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-        }
-
-        final var body = (response.exists == Boolean.TRUE) ? HttpSuccessMassages.PRODUCT_EXISTS.getDescription()
+        final var body = (exists == Boolean.TRUE) ? HttpSuccessMassages.PRODUCT_EXISTS.getDescription()
                 : HttpFailureMassages.PRODUCT_DOES_NOT_EXIST.getDescription();
 
         // RETURN_SUCCESS
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(body);
     }
+
 
 }

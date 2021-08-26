@@ -38,7 +38,9 @@ public enum HttpFailureMassages {
     PRODUCT_ID_IS_REQUIRED("Product ID is required"), 
     PRODUCT_TITLE_IS_REQUIRED("Product title is required"), 
     STORE_ID_IS_REQUIRED("Store ID is required"),
-    PRODUCT_IS_REQUIRED("Product information is required");
+    PRODUCT_IS_REQUIRED("Product information is required"),
+    FAILED_TO_MAKE_PRODUCT_PASSIVE("Failed to make product passive"),
+    FAILED_TO_DELETE_PRODUCT_PERMANENTLY("Failed to delete product permanently");
 
     private final String description;
 }
